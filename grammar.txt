@@ -1,0 +1,75 @@
+HaHaPuShi Grammar 
+
+Prog -> main
+main -> INT "main" "(" ")" "{" stmts ret "}"
+stmts -> stmt | stmt stmts
+stmt -> ifelse_cond | 
+		for_loop |
+		while_loop |
+		var_dec |
+              var_assgn |
+		exp_stmt |
+		print_stmt |
+		ret 
+
+ifelse_cond -> IF "(" relop_exp ")" "{" stmts "}" | 
+			IF "(" relop_exp ")" "{" stmts "}" ELSE "{" stmts "}" 
+
+for_loop -> FOR "(" var_dec ";" relop_exp ";" exp ")" "{" stmts "}"
+
+while_loop -> WHILE "(" relop_exp ")" "{" stmts "}"
+
+id_chain -> ID | ID "," id_chain
+
+var_dec -> TYPE VAR "=" exp ";"|
+            TYPE VAR ";" |
+            ARRAY "(" TYPE, VAR ")" VAR ";" | 
+            ARRAY "(" TYPE, ID ")" VAR "=" "{" id_chain "}" ";" 
+
+exp_stmt -> exp ";"
+
+(note: relop_exp is made separate because they will always have a truth value associated)
+relop_exp -> exp ">" exp |
+             exp "<" exp |
+             exp "==" exp |
+             exp "<=" exp |
+             exp ">=" exp |
+             exp "!=" exp |
+             exp AND exp |
+             exp OR exp |
+             exp XOR exp |
+             relop_exp AND relop_exp |
+             relop_exp OR relop_exp |
+             relop_exp XOR relop_exp
+
+exp -> exp "+" exp |
+       exp "-" exp |
+       exp "*" exp |
+       exp "/" exp |
+       exp "^" exp |
+       exp "%" exp |
+       exp "&" exp |
+       exp "|" exp |
+       "( exp ")" |
+       "-" exp |
+       id
+
+print_stmt -> PRINT "(" FORMAT ")"
+
+id -> var | 
+      NUM
+
+var -> VAR | 
+       VAR"[" id "]"
+
+------------------- NOTES -------------------
+id means I want either a number or a declared variable
+
+
+
+-------------------------- NOT SURE -------------------------------
+prog -> fucns main | main
+
+funcs -> func | func funcs
+
+func -> "func" TYPE VAR "{" stmts ret "}"
