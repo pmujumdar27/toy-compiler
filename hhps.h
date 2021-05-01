@@ -1,12 +1,10 @@
 /* Data type for links in the chain of symbols.      */
-struct symrec
+typedef struct _symrec
 {
 	char *name;  /* name of symbol                     */
 	char addr[100];           /* value of a VAR          */
-	struct symrec *next;    /* link field              */
-};
-
-typedef struct symrec symrec;
+	struct _symrec *next;    /* link field              */
+} symrec;
 
 
 

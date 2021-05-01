@@ -25,7 +25,7 @@ id_chain -> ID | ID "," id_chain
 
 var_dec -> TYPE VAR "=" exp ";"|
             TYPE VAR ";" |
-            ARRAY "(" TYPE, VAR ")" VAR ";" | 
+            ARRAY "(" TYPE, id ")" VAR ";" | 
             ARRAY "(" TYPE, ID ")" VAR "=" "{" id_chain "}" ";" 
 
 exp_stmt -> exp ";"
