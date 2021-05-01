@@ -31,9 +31,11 @@ StmtsNode *stmtsptr;
 %type <relop_cond> relops
 
 %right '='
+%left '&' 
+%left '|'
 %left '-' '+'
-%left '*' '/'
-
+%left '*' '/' '%'
+%right UMINUS
 %%
 
 prog:
