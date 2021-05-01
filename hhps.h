@@ -19,6 +19,7 @@ typedef struct StmtNode *stmtptr;
 
 typedef enum {
 	IF_ELSE_STMT,
+	ELSE_STMT,
 	FOR_LOOP,
 	WHILE_LOOP,
 	VAR_DEC,
