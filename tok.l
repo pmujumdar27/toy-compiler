@@ -39,13 +39,14 @@ id              [a-zA-Z_][a-zA-Z_]*
 ";"				{ return SEMICOLON; }
 ","       { return COMMA; }
 
-"<="			{ return LE; }
-">="			{ return GE; }
-"!="			{ return NE; }
-"=="			{ return EQ; }
-
-"&&"			{ return AND; }
-"||"			{ return OR; }
+"<"       { sscanf("slt", "%s", &yylval.relop_cond); return LT; }
+">"       { sscanf("sgt", "%s", &yylval.relop_cond); return GT; }
+"<="			{ sscanf("sle", "%s", &yylval.relop_cond); return LE; }
+">="			{ sscanf("sge", "%s", &yylval.relop_cond); return GE; }
+"!="			{ sscanf("sne", "%s", &yylval.relop_cond); return NE; }
+"=="			{ sscanf("seq", "%s", &yylval.relop_cond); return EQ; }
+"&&"			{ sscanf("and", "%s", &yylval.relop_cond); return AND; }
+"||"			{ sscanf("or", "%s", &yylval.relop_cond); return OR; }
 
 "return"		{ return RETURN; }
 "print"			{ return PRINT; }
