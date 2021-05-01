@@ -28,9 +28,11 @@ StmtsNode *stmtsptr;
 %type <stmtptr> stmt
 
 %right '='
+%left '&' 
+%left '|'
 %left '-' '+'
-%left '*' '/'
-
+%left '*' '/' '%'
+%right UMINUS
 %%
 
 prog:
@@ -112,7 +114,7 @@ exp:    exp "+" exp  {sprintf($$,"%s\nsub $sp, $sp, 4\nsw $t0, 0($sp)\n%s\nlw $t
     |   exp "&" exp  {sprintf($$,"%s\nsub $sp, $sp, 4\nsw $t0, 0($sp)\n%s\nlw $t1 4($sp)\nand $t0, $t0, $t1\naddi $sp, $sp, 4", $1, $3);}
     |   exp "|" exp  {sprintf($$,"%s\nsub $sp, $sp, 4\nsw $t0, 0($sp)\n%s\nlw $t1 4($sp)\nor $t0, $t0, $t1\naddi $sp, $sp, 4", $1, $3);}
     |   "(" exp ")"  {sprintf($$,"%s\n", $2);}
-    |   "-" exp      {sprintf($$,"%s\nmuli $t0, $t0, -1", $2);}
+    |   "-" exp %prec UMINUS     {sprintf($$,"%s\nmuli $t0, $t0, -1", $2);}
     |   id           {sprintf($$,"%s\n", $1);}
 
 id:     var {sprintf($$, "lw $t0, %s($t8)",$1->addr);}
