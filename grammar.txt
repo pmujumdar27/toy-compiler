@@ -17,7 +17,8 @@ ifelse_stmt -> IF "(" relop_exp ")" "{" stmts "}" |
 
 else_stmt -> "ELSE" "{" stmts "}" | "ELSE" stmt
 
-for_loop -> FOR "(" var_dec ";" relop_exp ";" exp ")" "{" stmts "}"
+for_loop -> FOR "(" var_dec ";" relop_exp ";" exp ")" "{" stmts "}" | 
+            FOR VAR RANGE "(" NUM "," NUM ")" "{" stmts "}"
 
 while_loop -> WHILE "(" relop_exp ")" "{" stmts "}"
 
@@ -25,8 +26,7 @@ id_chain -> ID | ID "," id_chain
 
 var_dec -> TYPE VAR "=" exp ";"|
             TYPE VAR ";" |
-            ARRAY "(" TYPE, id ")" VAR ";" | 
-            ARRAY "(" TYPE, ID ")" VAR "=" "{" id_chain "}" ";" 
+            ARRAY "(" TYPE, id ")" VAR ";"
 
 exp_stmt -> exp ";"
 
@@ -48,7 +48,6 @@ exp -> exp "+" exp |
        exp "-" exp |
        exp "*" exp |
        exp "/" exp |
-       exp "^" exp |
        exp "%" exp |
        exp "&" exp |
        exp "|" exp |

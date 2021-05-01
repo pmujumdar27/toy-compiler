@@ -698,99 +698,104 @@ YY_RULE_SETUP
 case 10:
 YY_RULE_SETUP
 #line 26 "tok.l"
-{ return MAIN; }
+{ symrec *s;
+				s = getsym(yytext);
+				if(s==0)
+					s = putsym(yytext, MAIN);
+				yylval.tptr = s;
+				return MAIN;}
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 28 "tok.l"
+#line 33 "tok.l"
 { return LPAREN; }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 29 "tok.l"
+#line 34 "tok.l"
 { return RPAREN; }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 30 "tok.l"
+#line 35 "tok.l"
 { return LCBRACE; }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 31 "tok.l"
+#line 36 "tok.l"
 { return RCBRACE; }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 33 "tok.l"
+#line 38 "tok.l"
 { return SEMICOLON; }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 35 "tok.l"
+#line 40 "tok.l"
 { return LE; }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 36 "tok.l"
+#line 41 "tok.l"
 { return GE; }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 37 "tok.l"
+#line 42 "tok.l"
 { return NE; }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 38 "tok.l"
+#line 43 "tok.l"
 { return EQ; }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 40 "tok.l"
+#line 45 "tok.l"
 { return AND; }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 41 "tok.l"
+#line 46 "tok.l"
 { return OR; }
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 43 "tok.l"
+#line 48 "tok.l"
 { return RETURN; }
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 44 "tok.l"
+#line 49 "tok.l"
 { return PRINT; }
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 46 "tok.l"
+#line 51 "tok.l"
 { sscanf(yytext, "%d", &yylval.val); return NUM;}
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 47 "tok.l"
+#line 52 "tok.l"
 { symrec *s;
 				s = getsym(yytext);
 				if(s==0)
 					s = putsym(yytext, VAR);
-					yylval.tptr = s;
-					return VAR;}
+				yylval.tptr = s;
+				return VAR;}
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 54 "tok.l"
+#line 59 "tok.l"
 { return yytext[0]; }
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 55 "tok.l"
+#line 60 "tok.l"
 ECHO;
 	YY_BREAK
-#line 794 "lex.yy.c"
+#line 799 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1676,7 +1681,7 @@ int main()
 	return 0;
 	}
 #endif
-#line 55 "tok.l"
+#line 60 "tok.l"
 
 
 /* The symbol table: a chain of `struct symrec'.  */
@@ -1688,7 +1693,7 @@ symrec * putsym (char *sym_name,int sym_type){
   strcpy (ptr->name,sym_name);
   sprintf(ptr->addr,"%d",Adr); /* set value to 0 even if fctn.  */
   Adr=Adr+4;
-  ptr->next = (struct symrec *)sym_table;
+  ptr->next = (symrec *)sym_table;
   sym_table = ptr;
   return ptr;
 }

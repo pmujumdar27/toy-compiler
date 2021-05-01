@@ -19,9 +19,9 @@ StmtNode *stmtptr;
 StmtsNode *stmtsptr;
 }
 
-%token <val> NUM INT
+%token <val> NUM
 %token <tptr> MAIN VAR
-%token IF ELSE FOR WHILE
+%token IF ELSE FOR WHILE ARRAY INT LPAREN RPAREN LCBRACE RCBRACE SEMICOLON GE LE NE EQ AND OR RETURN PRINT BREAK COMMA
 %type <c> exp
 %type <nData> x
 %type <stmtsptr> stmts
@@ -38,7 +38,7 @@ prog:
 ;
 
 main:
-    INT MAIN '(' ')' '{' stmts '}' {
+   INT MAIN '(' ')' '{' stmts '}' {
         root = $6;
     }
     ;
@@ -60,7 +60,7 @@ stmts:
     ;
 
 stmt:
-    ifelse_cond {
+    ifelse_stmt {
         $$ = $1;
     }
     |
@@ -92,15 +92,5 @@ stmt:
         $$ = $1;
     }
     ;
-
-ifelse_cond:
-    IF '(' relop_exp ')' '{' stmts '}' ELSE '{' stmts '}' {
-        $$ = (StmtsNode*)malloc(sizeof(StmtsNode));
-        $$->nodeType = IF_ELSE_STMT;
-    }
-    |
-    IF '(' relop_exp ')' '{' stmts '}' {
-        ;
-    }
 
 %%

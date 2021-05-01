@@ -15,15 +15,21 @@ id              [a-zA-Z_][a-zA-Z_]*
 %%
 
 "\n"			{ line++; indent=0; }
-[ \t]+			{ indent++; }
+[ \t]+		{ indent++; }
 "if"			{ return IF; }
-"else"			{ return ELSE; }
+"else"		{ return ELSE; }
 "for"			{ return FOR; }
-"while"			{ return WHILE; }
-"range"			{ return RANGE; }
-"array"			{ return ARRAY; }
+"while"		{ return WHILE; }
+"range"		{ return RANGE; }
+"array"		{ return ARRAY; }
 "int"			{ return INT; }
-"main"			{ return MAIN; }
+"break"		{ return BREAK; }
+"main"		{ symrec *s;
+				s = getsym(yytext);
+				if(s==0)
+					s = putsym(yytext, MAIN);
+				yylval.tptr = s;
+				return MAIN;}
 
 "("				{ return LPAREN; }
 ")"				{ return RPAREN; }
@@ -31,6 +37,7 @@ id              [a-zA-Z_][a-zA-Z_]*
 "}"				{ return RCBRACE; }
 
 ";"				{ return SEMICOLON; }
+","       { return COMMA; }
 
 "<="			{ return LE; }
 ">="			{ return GE; }
@@ -48,8 +55,8 @@ id              [a-zA-Z_][a-zA-Z_]*
 				s = getsym(yytext);
 				if(s==0)
 					s = putsym(yytext, VAR);
-					yylval.tptr = s;
-					return VAR;}
+				yylval.tptr = s;
+				return VAR;}
 
 .				{ return yytext[0]; }
 %%
