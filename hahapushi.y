@@ -102,5 +102,33 @@ ifelse_cond:
     IF '(' relop_exp ')' '{' stmts '}' {
         ;
     }
+;
+
+var_dec:
+    ARRAY LPAREN TYPE ',' ID RPAREN VAR SEMICOLON {
+        $$ = (StmtsNode*)malloc(sizeof(StmtsNode));
+        $$->nodeType = VAR_DEC;
+        sprintf($$->bodyCode, "%s\nmul $t0 $t0 4\nsubu $sp $sp $t0\nsw $sp %s($t8)", $5, $7->addr);
+    }
+    | 
+    TYPE VAR SEMICOLON {
+        $$ = (StmtsNode*)malloc(sizeof(StmtsNode));
+        $$->nodeType = VAR_DEC;
+        sprintf($$->bodyCode, "");
+    }
+    |
+    TYPE VAR '=' exp_stmt {
+        $$ = (StmtsNode*)malloc(sizeof(StmtsNode));
+        $$->nodeType = VAR_DEC;
+        sprintf($$->bodyCode, "%s\nsw $t0 %s($t8)", $4->bodyCode, $2->addr);
+    }
+;
+
+var_assgn:
+    var "=" exp_stmt {
+
+    }
+
+;
 
 %%

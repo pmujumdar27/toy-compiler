@@ -23,10 +23,14 @@ while_loop -> WHILE "(" relop_exp ")" "{" stmts "}"
 
 id_chain -> ID | ID "," id_chain
 
-var_dec -> TYPE VAR "=" exp ";"|
+var_dec -> TYPE VAR "=" exp_stmt |
             TYPE VAR ";" |
             ARRAY "(" TYPE, id ")" VAR ";" | 
             ARRAY "(" TYPE, ID ")" VAR "=" "{" id_chain "}" ";" 
+
+var_assgn ->  VAR "=" exp_stmt |
+              
+
 
 exp_stmt -> exp ";"
 
