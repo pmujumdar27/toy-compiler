@@ -3,7 +3,7 @@ HaHaPuShi Grammar
 Prog -> main
 main -> INT "main" "(" ")" "{" stmts ret "}"
 stmts -> stmt | stmt stmts
-stmt -> ifelse_cond | 
+stmt -> ifelse_stmt | 
 		for_loop |
 		while_loop |
 		var_dec |
@@ -12,8 +12,10 @@ stmt -> ifelse_cond |
 		print_stmt |
 		ret 
 
-ifelse_cond -> IF "(" relop_exp ")" "{" stmts "}" | 
-			IF "(" relop_exp ")" "{" stmts "}" ELSE "{" stmts "}" 
+ifelse_stmt -> IF "(" relop_exp ")" "{" stmts "}" | 
+			IF "(" relop_exp ")" "{" stmts "}" else_stmt
+
+else_stmt -> "ELSE" "{" stmts "}" | "ELSE" stmt
 
 for_loop -> FOR "(" var_dec ";" relop_exp ";" exp ")" "{" stmts "}"
 

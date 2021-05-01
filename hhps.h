@@ -42,5 +42,6 @@ typedef struct _StmtNode{
 	char initCode[100];
 	char initJumpCode[20];
 	char bodyCode[1000];
+	char elseCode[1000];
 	struct StmtsNode *down;
 } StmtNode;
