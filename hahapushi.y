@@ -102,10 +102,10 @@ ifelse_cond:
     IF '(' relop_exp ')' '{' stmts '}' {
         ;
     }
-;
+    ;
 
 var_dec:
-    ARRAY LPAREN TYPE ',' ID RPAREN VAR SEMICOLON {
+    ARRAY LPAREN TYPE ',' id RPAREN VAR SEMICOLON {
         $$ = (StmtsNode*)malloc(sizeof(StmtsNode));
         $$->nodeType = VAR_DEC;
         sprintf($$->bodyCode, "%s\nmul $t0 $t0 4\nsubu $sp $sp $t0\nsw $sp %s($t8)", 
@@ -124,24 +124,35 @@ var_dec:
         sprintf($$->bodyCode, "%s\nsw $t0 %s($t8)", 
         $4->bodyCode, $2->addr);
     }
-;
+    ;
 
 var_assgn:
-    var "=" exp_stmt {
+    VAR '=' exp_stmt {
         $$ = (StmtsNode*)malloc(sizeof(StmtsNode));
         $$->nodeType = VAR_ASSGN;
         sprintf($$->bodyCode, "%s\nsw $t0 %s($t8)",
         $3->bodyCode, $1->addr);
 
     }
-
-    var '[' ID ']' = exp_stmt {
+    |
+    VAR '[' id ']' = exp_stmt {
         $$ = (StmtsNode*)malloc(sizeof(StmtsNode));
         $$->nodeType = VAR_ASSGN;
         sprintf($$->bodyCode, "%s\nsubu $sp $sp 4\nsw $t0 ($sp)\n%s\nlw $t1 ($sp)\nmul $t0 $t0 4\nlw $t2 %s($t8)\nadd $t0 $t0 $t2\nadd $t0 $t0 $t8\nsw $t1 ($t0)\naddu $sp $sp 4",
-        $6->bodyCode, $3, $1->addr)
+        $6->bodyCode, $3, $1->addr);
     }
+    ;
 
-;
+id:
+    VAR {sprintf($$, "lw $t0, %s($t8)",$1->addr);}
+    |   
+    NUM {sprintf($$, "li $t0, %d",$1);}
+    |
+    VAR '[' id ']'{
+        sprintf($$, "%s\nlw $t1 %s($t8)\nmul $t0 $t0 4\nadd $t1 $t1 $t0\nadd $t1 $t1 $t8\nlw $t0 ($t1)",
+        $3, $1->addr);
+    }
+    ;
+
 
 %%
