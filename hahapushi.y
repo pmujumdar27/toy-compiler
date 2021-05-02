@@ -105,14 +105,14 @@ ifelse_cond:
     ;
 
 var_dec:
-    ARRAY LPAREN TYPE ',' id RPAREN VAR SEMICOLON {
+    ARRAY LPAREN TYPE ',' id RPAREN VAR {
         $$ = (StmtsNode*)malloc(sizeof(StmtsNode));
         $$->nodeType = VAR_DEC;
         sprintf($$->bodyCode, "%s\nmul $t0 $t0 4\nsubu $sp $sp $t0\nsw $sp %s($t8)", 
         $5, $7->addr);
     }
     | 
-    TYPE VAR SEMICOLON {
+    TYPE VAR {
         $$ = (StmtsNode*)malloc(sizeof(StmtsNode));
         $$->nodeType = VAR_DEC;
         sprintf($$->bodyCode, "");
@@ -135,7 +135,7 @@ var_assgn:
 
     }
     |
-    VAR '[' id ']' = exp_stmt {
+    VAR '[' id ']' '=' exp_stmt {
         $$ = (StmtsNode*)malloc(sizeof(StmtsNode));
         $$->nodeType = VAR_ASSGN;
         sprintf($$->bodyCode, "%s\nsubu $sp $sp 4\nsw $t0 ($sp)\n%s\nlw $t1 ($sp)\nmul $t0 $t0 4\nlw $t2 %s($t8)\nadd $t0 $t0 $t2\nadd $t0 $t0 $t8\nsw $t1 ($t0)\naddu $sp $sp 4",
