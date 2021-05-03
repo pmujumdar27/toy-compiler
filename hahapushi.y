@@ -125,6 +125,7 @@ for_loop:
         }
         sprintf($$->initCode, "\n%s\n%s\n%s\n", load_op_1, load_op_2, operation_code);
         sprintf($$->initJumpCode,"beq $t0, $0,");
+        $$->forUpdate = update_code;
         $$->down = $10;
     }
     |
@@ -154,6 +155,7 @@ for_loop:
         }
         sprintf($$->initCode, "\n%s\n%s\n%s\n", load_op_1, load_op_2, operation_code);
         sprintf($$->initJumpCode,"beq $t0, $0,");
+        $$->forUpdate = update_code;
         $$->down = (StmtsNode*)malloc(sizeof(StmtsNode));
         $$->down->singl = 1;
         $$->down->left = $10;
