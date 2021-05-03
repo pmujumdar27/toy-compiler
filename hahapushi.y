@@ -98,6 +98,69 @@ stmt:
     }
     ;
 
+for_loop:
+    FOR VAR RANGE LPAREN NUM COMMA NUM RPAREN LCBRACE stmts RCBRACE {
+        $$ = (StmtNode*)malloc(sizeof(StmtNode));
+        $$->nodeType =FOR_LOOP;
+        
+        // assigning VAR the value of $5
+        sprintf($$->forIter,"%s\nsw $t0,%s($t8)\n", $5, $2->addr);
+
+        char load_op_1[80]; //loads value of VAR and stores it in $t1
+        char load_op_2[80]; //loads value of $7  and stores it in $t2
+
+        sprintf(load_op_1, "%s\n%s", $2, "move $t1, $t0");
+        sprintf(load_op_2, "%s", "li $t2, %d", $7);
+
+        char opration_code[80]; //code for relop of the loop
+        char update_code[80]; //code to update VAR
+
+        if($5 <= $7){
+            sprintf(opration_code, "%s", "slt $t0, $t1, $t2");
+            sprintf(update_code,"lw $t0, %s($t8)\naddi $t0, $t0, 1\nsw $t0,%s($t8)\n", $2->addr, $2->addr);
+        }
+        else{
+            sprintf(opration_code, "%s", "sgt $t0, $t1, $t2");
+            sprintf(update_code,"lw $t0, %s($t8)\nsubi $t0, $t0, 1\nsw $t0,%s($t8)\n", $2->addr, $2->addr);
+        }
+        sprintf($$->initCode, "\n%s\n%s\n%s\n", load_op_1, load_op_2, operation_code);
+        sprintf($$->initJumpCode,"beq $t0, $0,");
+        $$->down = $10;
+    }
+    |
+    FOR VAR RANGE LPAREN NUM COMMA NUM RPAREN LCBRACE stmt RCBRACE {
+        $$ = (StmtNode*)malloc(sizeof(StmtNode));
+        $$->nodeType =FOR_LOOP;
+        
+        // assigning VAR the value of $5
+        sprintf($$->forIter,"%s\nsw $t0,%s($t8)\n", $5, $2->addr);
+
+        char load_op_1[80]; //loads value of VAR and stores it in $t1
+        char load_op_2[80]; //loads value of $7  and stores it in $t2
+
+        sprintf(load_op_1, "%s\n%s", $2, "move $t1, $t0");
+        sprintf(load_op_2, "%s", "li $t2, %d", $7);
+
+        char opration_code[80]; //code for relop of the loop
+        char update_code[80]; //code to update VAR
+
+        if($5 <= $7){
+            sprintf(opration_code, "%s", "slt $t0, $t1, $t2");
+            sprintf(update_code,"lw $t0, %s($t8)\naddi $t0, $t0, 1\nsw $t0,%s($t8)\n", $2->addr, $2->addr);
+        }
+        else{
+            sprintf(opration_code, "%s", "sgt $t0, $t1, $t2");
+            sprintf(update_code,"lw $t0, %s($t8)\nsubi $t0, $t0, 1\nsw $t0,%s($t8)\n", $2->addr, $2->addr);
+        }
+        sprintf($$->initCode, "\n%s\n%s\n%s\n", load_op_1, load_op_2, operation_code);
+        sprintf($$->initJumpCode,"beq $t0, $0,");
+        $$->down = (StmtsNode*)malloc(sizeof(StmtsNode));
+        $$->down->singl = 1;
+        $$->down->left = $10;
+        $$->down->right = NULL;
+    }
+    ;
+
 while_loop:
     WHILE LPAREN relop_exp RPAREN LCBRACE stmts RCBRACE {
         $$ = (StmtNode*)malloc(sizeof(StmtNode));
@@ -185,7 +248,7 @@ exp:
     ;
 
 id:
-    var {sprintf($$, "lw $t0, %s($t8)",$1->addr);}
+    VAR {sprintf($$, "lw $t0, %s($t8)",$1->addr);}
     |   NUM {sprintf($$, "li $t0, %d",$1);}
     ;
 %%
