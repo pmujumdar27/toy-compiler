@@ -158,7 +158,7 @@ else_stmt:
     ;
 
 for_loop:
-    FOR VAR RANGE LPAREN NUM COMMA NUM RPAREN LCBRACE stmts RCBRACE {
+    FOR VAR RANGE LPAREN id COMMA id RPAREN LCBRACE stmts RCBRACE {
         $$ = (StmtNode*)malloc(sizeof(StmtNode));
         $$->nodeType = FOR_LOOP;
         
@@ -168,11 +168,13 @@ for_loop:
         char load_op_1[80]; //loads value of VAR and stores it in $t1
         char load_op_2[80]; //loads value of $7  and stores it in $t2
 
-        sprintf(load_op_1, "%s\n%s", $2, "move $t1, $t0");
-        sprintf(load_op_2, "%s", "li $t2, %d", $7);
+        sprintf(load_op_1, "%s\n%s\n", $2, "move $t1, $t0");
+        sprintf(load_op_2, "%s\nmove $t2 $t0\n", $7);
 
         char operation_code[80]; //code for relop of the loop
         char update_code[80]; //code to update VAR
+        operation_code[0] = '\0';
+        update_code[0] = '\0';
 
         if($5 <= $7){
             sprintf(operation_code, "%s", "slt $t0, $t1, $t2");
@@ -189,7 +191,7 @@ for_loop:
         $$->down = $10;
     }
     |
-    FOR VAR RANGE LPAREN NUM COMMA NUM RPAREN LCBRACE stmt RCBRACE {
+    FOR VAR RANGE LPAREN id COMMA id RPAREN LCBRACE stmt RCBRACE {
         $$ = (StmtNode*)malloc(sizeof(StmtNode));
         $$->nodeType =FOR_LOOP;
         
@@ -200,10 +202,12 @@ for_loop:
         char load_op_2[80]; //loads value of $7  and stores it in $t2
 
         sprintf(load_op_1, "%s\n%s", $2, "move $t1, $t0");
-        sprintf(load_op_2, "%s", "li $t2, %d", $7);
+        sprintf(load_op_2, "%s\nmove $t2 $t0", $7);
 
         char operation_code[80]; //code for relop of the loop
         char update_code[80]; //code to update VAR
+        operation_code[0] = '\0';
+        update_code[0] = '\0';
 
         if($5 <= $7){
             sprintf(operation_code, "%s", "slt $t0, $t1, $t2");

@@ -82,12 +82,13 @@ void StmtTrav(StmtNode *root){
             ;
             
             char *for_start = get_new_label("for_start", lcnt);
-            char *for_end = get_new_label("for_end, lcnt", lcnt);
+            char *for_end = get_new_label("for_end", lcnt);
             lcnt++;
 
             // initializations and conditions
             fprintf(fp, "%s\n", root->forIter);
-            fprintf(fp, "%s\n", for_start);
+            fprintf(fp, "%s:\n", for_start);
+            fprintf(fp,"#For_start DONE\n");
             fprintf(fp, "%s\n", root->initCode);
             fprintf(fp, "%s %s\n", root->initJumpCode, for_end);
 
@@ -96,7 +97,7 @@ void StmtTrav(StmtNode *root){
             fprintf(fp, "%s\n", root->forUpdate);
             
             // unconditional jump because condition is checked in the beginning of the next iter
-            fprintf(fp,"j %s\n%s:", for_start, for_end);
+            fprintf(fp,"j %s\n%s:\n", for_start, for_end);
 
             break;
         case WHILE_LOOP:
