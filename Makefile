@@ -17,4 +17,4 @@ clean:
 	rm hahapushi.tab.c hahapushi.tab.o lex.yy.o a.out hahapushi.tab.h lex.yy.c asmb.asm
 
 clean_win:
-	hahapushi.tab.c hahapushi.tab.o lex.yy.o a.out hahapushi.tab.h lex.yy.c asmb.asm
+	del hahapushi.tab.c hahapushi.tab.o lex.yy.o a.exe hahapushi.tab.h lex.yy.c asmb.asm
