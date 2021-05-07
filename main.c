@@ -6,6 +6,7 @@
 #include "hhps.h"
 #include "hahapushi.tab.h"
 
+
 FILE *fp;
 StmtsNode *root;
 int lcnt = 0;
@@ -36,6 +37,7 @@ void StmtTrav(StmtNode *root){
         switch (root->nodeType)
         {
         case IF_ELSE_STMT:
+            ;
             char *if_end = get_new_label("if_end", lcnt);
 
             // relop condition code
@@ -77,6 +79,7 @@ void StmtTrav(StmtNode *root){
         //     break;
 
         case FOR_LOOP:
+            ;
             
             char *for_start = get_new_label("for_start", lcnt);
             char *for_end = get_new_label("for_end, lcnt", lcnt);
@@ -97,6 +100,7 @@ void StmtTrav(StmtNode *root){
 
             break;
         case WHILE_LOOP:
+            ;
             
             char *while_start = get_new_label("while_start", lcnt);
             char *while_end = get_new_label("while_end", lcnt);

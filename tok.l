@@ -25,18 +25,19 @@ id              [a-zA-Z_][a-zA-Z_]*
 "while"		{ return WHILE; }
 "range"		{ return RANGE; }
 "array"		{ return ARRAY; }
-"int"			{ return INT; }
+"int"			{ printf("int"); return INT; }
 "main"		{ symrec *s;
 				s = getsym(yytext);
 				if(s==0)
 					s = putsym(yytext, MAIN);
 				yylval.tptr = s;
+        printf("main");
 				return MAIN;}
 
-"("				{ return LPAREN; }
-")"				{ return RPAREN; }
-"{"				{ return LCBRACE; }
-"}"				{ return RCBRACE; }
+"("				{ printf("("); return LPAREN; }
+")"				{ printf(")"); return RPAREN; }
+"{"				{ printf("{");return LCBRACE; }
+"}"				{ printf("}");return RCBRACE; }
 
 ";"				{ return SEMICOLON; }
 ","       { return COMMA; }
@@ -53,15 +54,16 @@ id              [a-zA-Z_][a-zA-Z_]*
 "return"		{ return RETURN; }
 "print"			{ return PRINT; }
 
-{integer}		{ sscanf(yytext, "%d", &yylval.val); return NUM;}
+{integer}		{ printf("%s", yytext); sscanf(yytext, "%d", &yylval.val); return NUM;}
 {id}			{ symrec *s;
 				s = getsym(yytext);
 				if(s==0)
 					s = putsym(yytext, VAR);
 				yylval.tptr = s;
+        printf("%s", yytext);
 				return VAR;}
 
-.				{ return yytext[0]; }
+.				{ printf("%s", yytext); return yytext[0]; }
 %%
 
 /* The symbol table: a chain of `struct symrec'.  */

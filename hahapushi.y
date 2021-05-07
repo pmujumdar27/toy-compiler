@@ -10,7 +10,7 @@ int yylex();
 StmtsNode *root;
 
 void yyerror(char *s){
-    printf("Error\n");
+    printf("%s\n", s);
 }
 %}
 
@@ -47,7 +47,7 @@ prog:
 ;
 
 main:
-   INT MAIN '(' ')' '{' stmts '}' {
+   INT MAIN LPAREN RPAREN LCBRACE stmts RCBRACE {
         root = $6;
     }
     ;
@@ -81,11 +81,11 @@ stmt:
         $$ = $1;
     }
     |
-    var_dec ';' {
+    var_dec SEMICOLON {
         $$ = $1;
     }
     |
-    var_assgn ';' {
+    var_assgn SEMICOLON {
         $$ = $1;
     }
     |
@@ -335,7 +335,7 @@ var_assgn:
     ;
 
 print_stmt:
-    PRINT LPAREN id RPAREN {
+    PRINT LPAREN id RPAREN SEMICOLON {
         $$ = (StmtNode*)malloc(sizeof(StmtNode));
         $$->nodeType = PRINT_STMT;
         sprintf($$->bodyCode, "%s\nmove $a0 $t0\nli $v0 1\nsyscall",
