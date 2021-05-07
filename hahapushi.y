@@ -18,8 +18,8 @@ void yyerror(char *s){
 int   val;  /* For returning numbers.                   */
 struct symrec  *tptr;   /* For returning symbol-table pointers      */
 char c[10000];
-char relop_cond[20];
-char nData[100];
+char relop_cond[200];
+char nData[1000];
 StmtNode *stmtptr;
 StmtsNode *stmtsptr;
 }
