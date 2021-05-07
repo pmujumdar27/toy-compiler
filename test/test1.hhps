@@ -1,6 +1,8 @@
 int main(){
-    int x = 5;
-    for i range(0, 10){
-        print(i);
+    int x = 23;
+    while(x<30){
+        x = x+1;
     }
+    print(x);
+    return 0;
 }

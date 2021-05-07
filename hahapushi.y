@@ -18,8 +18,8 @@ void yyerror(char *s){
 int   val;  /* For returning numbers.                   */
 struct symrec  *tptr;   /* For returning symbol-table pointers      */
 char c[10000];
-char relop_cond[20];
-char nData[100];
+char relop_cond[200];
+char nData[1000];
 StmtNode *stmtptr;
 StmtsNode *stmtsptr;
 }
@@ -171,8 +171,8 @@ for_loop:
         sprintf(load_op_1, "%s\n%s", $2, "move $t1, $t0");
         sprintf(load_op_2, "%s", "li $t2, %d", $7);
 
-        char operation_code[80]; //code for relop of the loop
-        char update_code[80]; //code to update VAR
+        char operation_code[200]; //code for relop of the loop
+        char update_code[200]; //code to update VAR
 
         if($5 <= $7){
             sprintf(operation_code, "%s", "slt $t0, $t1, $t2");
@@ -196,14 +196,14 @@ for_loop:
         // assigning VAR the value of $5
         sprintf($$->forIter,"%s\nsw $t0,%s($t8)\n", $5, $2->addr);
 
-        char load_op_1[80]; //loads value of VAR and stores it in $t1
-        char load_op_2[80]; //loads value of $7  and stores it in $t2
+        char load_op_1[200]; //loads value of VAR and stores it in $t1
+        char load_op_2[200]; //loads value of $7  and stores it in $t2
 
         sprintf(load_op_1, "%s\n%s", $2, "move $t1, $t0");
         sprintf(load_op_2, "%s", "li $t2, %d", $7);
 
-        char operation_code[80]; //code for relop of the loop
-        char update_code[80]; //code to update VAR
+        char operation_code[200]; //code for relop of the loop
+        char update_code[200]; //code to update VAR
 
         if($5 <= $7){
             sprintf(operation_code, "%s", "slt $t0, $t1, $t2");
@@ -414,7 +414,7 @@ exp:
     |   exp '&' exp  {sprintf($$,"%s\nsub $sp, $sp, 4\nsw $t0, 0($sp)\n%s\nlw $t1 0($sp)\nand $t0, $t0, $t1\naddi $sp, $sp, 4", $1, $3);}
     |   exp '|' exp  {sprintf($$,"%s\nsub $sp, $sp, 4\nsw $t0, 0($sp)\n%s\nlw $t1 0($sp)\nor $t0, $t0, $t1\naddi $sp, $sp, 4", $1, $3);}
     |   LPAREN exp RPAREN  {sprintf($$,"%s\n", $2);}
-    |   '-' exp %prec UMINUS     {sprintf($$,"%s\nmuli $t0, $t0, -1", $2);}
+    |   '-' exp %prec UMINUS     {sprintf($$,"%s\nmul $t0, $t0, -1", $2);}
     |   id           {sprintf($$,"%s\n", $1);}
     ;
 

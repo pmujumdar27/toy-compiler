@@ -38,6 +38,7 @@ void StmtTrav(StmtNode *root){
         {
         case IF_ELSE_STMT:
             ;
+            fprintf(fp, "#if statement started\n");
             char *if_end = get_new_label("if_end", lcnt);
 
             // relop condition code
@@ -47,18 +48,20 @@ void StmtTrav(StmtNode *root){
 
             if(root->elseCode == NULL){
                 // jump to end if relop gives false
+                fprintf(fp, "#if statement has no else\n");
                 fprintf(fp, "%s %s\n", root->initJumpCode, if_end);
                 StmtsTrav(root->down);
                 fprintf(fp, "j %s\n%s:\n", if_end, if_end);
             }
             else{
+                fprintf(fp, "#else part\n");
                 char *else_label = get_new_label("else", lcnt);
                 // jump to else if relop gives false
                 fprintf(fp, "%s %s\n", root->initJumpCode, else_label);
                 StmtsTrav(root->down);
 
                 // print code to jump to end of if statement
-                fprintf(fp, "j %s\n%s:\n", if_end);
+                fprintf(fp, "j %s\n", if_end);
 
                 // mark the start of else part
                 fprintf(fp, "%s:\n", else_label); 
@@ -108,10 +111,13 @@ void StmtTrav(StmtNode *root){
 
             // initializations and conditions
             fprintf(fp, "%s:\n", while_start);
+            fprintf(fp, "#initcode\n");
             fprintf(fp, "%s\n", root->initCode);
+            fprintf(fp, "#initJumpCode\n");
             fprintf(fp, "%s %s\n", root->initJumpCode, while_end);
 
             // print code for the statements inside the while loop
+            fprintf(fp, "#body of while loop\n");
             StmtsTrav(root->down);
 
             // unconditional jump for the while loop
