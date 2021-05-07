@@ -38,11 +38,11 @@ typedef struct _StmtsNode{
 
 typedef struct _StmtNode{
 	StmtType nodeType;
-	char initCode[100];
-	char initJumpCode[80];
+	char initCode[300];
+	char initJumpCode[300];
 	char bodyCode[1000];
-	char forIter[100];
-	char forUpdate[100];
+	char forIter[300];
+	char forUpdate[300];
 	StmtsNode *elseCode;
 	StmtsNode *down;
 } StmtNode;
