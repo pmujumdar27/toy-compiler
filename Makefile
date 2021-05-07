@@ -14,4 +14,4 @@ hahapushi.tab.h: hahapushi.y
 	bison -d hahapushi.y
 
 clean:
-	rm hahapushi.tab.c hahapushi.tab.o lex.yy.o a.exe hahapushi.tab.h lex.yy.c
+	rm hahapushi.tab.c, hahapushi.tab.o, lex.yy.o, hahapushi.tab.h, lex.yy.c

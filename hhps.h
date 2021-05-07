@@ -1,14 +1,14 @@
-#include <stdlib.h>
-
+#ifndef _HHPS_H_
+#define _HHPS_H_
 /* Data type for links in the chain of symbols.      */
-struct _symrec
+struct symrec
 {
 	char *name;  /* name of symbol                     */
 	char addr[100];           /* value of a VAR          */
-	struct _symrec *next;    /* link field              */
+	struct symrec *next;    /* link field              */
 };
 
-typedef struct _symrec symrec;
+typedef struct symrec symrec;
 
 
 /* The symbol table: a chain of `struct symrec'.     */
@@ -53,3 +53,5 @@ char *get_new_label(char *label_type, int label_count) {
     snprintf(buf, buffsz, ".%s_%d", label_type, label_count);
     return buf;
 }
+
+#endif

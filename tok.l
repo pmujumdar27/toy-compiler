@@ -4,8 +4,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include "hhps.h"
+#include "hahapushi.tab.h"
 int line = 0;
 int indent = 0;
+int Adr=0;
+symrec *sym_table = (symrec *)0;
 %}
 
 dig             [0-9]
@@ -23,7 +26,6 @@ id              [a-zA-Z_][a-zA-Z_]*
 "range"		{ return RANGE; }
 "array"		{ return ARRAY; }
 "int"			{ return INT; }
-"break"		{ return BREAK; }
 "main"		{ symrec *s;
 				s = getsym(yytext);
 				if(s==0)
