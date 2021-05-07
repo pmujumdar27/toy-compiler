@@ -1,5 +1,5 @@
-a.exe: hahapushi.tab.o lex.yy.o
-	gcc -g hahapushi.tab.o lex.yy.o
+hahapushi: hahapushi.tab.o lex.yy.o main.c
+	gcc -g hahapushi.tab.o lex.yy.o main.c
 
 hahapushi.tab.o: hahapushi.tab.h hahapushi.tab.c
 	gcc -g -c hahapushi.tab.c
@@ -14,4 +14,4 @@ hahapushi.tab.h: hahapushi.y
 	bison -d hahapushi.y
 
 clean:
-	rm hahapushi.tab.c, hahapushi.tab.o, lex.yy.o, hahapushi.tab.h, lex.yy.c
+	rm hahapushi.tab.c hahapushi.tab.o lex.yy.o a.out hahapushi.tab.h lex.yy.c

@@ -10,6 +10,13 @@ FILE *fp;
 StmtsNode *root;
 int lcnt = 0;
 
+char *get_new_label(char *label_type, int label_count) {
+    size_t buffsz = strlen(label_type) + 8;
+    char *buf = malloc(buffsz);
+    snprintf(buf, buffsz, ".%s_%d", label_type, label_count);
+    return buf;
+}
+
 void StmtTrav(StmtNode *root);
 
 void StmtsTrav(StmtsNode *root){
@@ -29,7 +36,7 @@ void StmtTrav(StmtNode *root){
         switch (root->nodeType)
         {
         case IF_ELSE_STMT:
-            char if_end = get_new_label("if_end", lcnt);
+            char *if_end = get_new_label("if_end", lcnt);
 
             // relop condition code
             fprintf(fp, "%s\n", root->bodyCode);
@@ -43,7 +50,7 @@ void StmtTrav(StmtNode *root){
                 fprintf(fp, "j %s\n%s:\n", if_end, if_end);
             }
             else{
-                char else_label = get_new_label("else", lcnt);
+                char *else_label = get_new_label("else", lcnt);
                 // jump to else if relop gives false
                 fprintf(fp, "%s %s\n", root->initJumpCode, else_label);
                 StmtsTrav(root->down);
@@ -71,8 +78,8 @@ void StmtTrav(StmtNode *root){
 
         case FOR_LOOP:
             
-            char for_start = get_new_label("for_start", lcnt);
-            char for_end = get_new_label("for_end, lcnt", lcnt);
+            char *for_start = get_new_label("for_start", lcnt);
+            char *for_end = get_new_label("for_end, lcnt", lcnt);
             lcnt++;
 
             // initializations and conditions
@@ -91,8 +98,8 @@ void StmtTrav(StmtNode *root){
             break;
         case WHILE_LOOP:
             
-            char while_start = get_new_label("while_start", lcnt);
-            char while_end = get_new_label("while_end", lcnt);
+            char *while_start = get_new_label("while_start", lcnt);
+            char *while_end = get_new_label("while_end", lcnt);
             lcnt++;
 
             // initializations and conditions

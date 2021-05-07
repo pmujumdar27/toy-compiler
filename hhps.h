@@ -47,6 +47,8 @@ typedef struct _StmtNode{
 	StmtsNode *down;
 } StmtNode;
 
+// char *get_new_label(char *label_type, int label_count);
+
 // char *get_new_label(char *label_type, int label_count) {
 //     size_t buffsz = strlen(label_type) + 8;
 //     char *buf = malloc(buffsz);
