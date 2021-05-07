@@ -4,7 +4,7 @@
 #include <ctype.h>
 
 #include "hhps.h"
-// #include "hahapushi.tab.h"
+#include "hahapushi.tab.h"
 
 FILE *fp;
 StmtsNode *root;
@@ -68,7 +68,7 @@ void StmtTrav(StmtNode *root){
         // case ELSE_STMT:
         //     /* code */
         //     break;
-        
+
         case FOR_LOOP:
             
             char for_start = get_new_label("for_start", lcnt);
@@ -128,4 +128,15 @@ void StmtTrav(StmtNode *root){
             break;
         }
     }
+}
+
+int main(int argc, char *argv[]){
+    fp=fopen("asmb.asm","w");
+    fprintf(fp,".data\n\n.text\nli $t8,268500992\n");
+    yyparse();
+    StmtsTrav(root);
+    // fprintf(fp,"\nli $v0,1\nmove $a0,$t0\nsyscall\n");
+    fclose(fp);
+
+    return 0;
 }

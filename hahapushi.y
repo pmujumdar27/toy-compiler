@@ -23,11 +23,11 @@ StmtsNode *stmtsptr;
 %token <val> NUM
 %token <tptr> MAIN VAR
 %token <relop_cond> LT GT LE GE NE EQ AND OR
-%token IF ELSE FOR WHILE ARRAY INT LPAREN RPAREN LCBRACE RCBRACE SEMICOLON RETURN PRINT BREAK COMMA RANGE
+%token IF ELSE FOR WHILE ARRAY INT LPAREN RPAREN LCBRACE RCBRACE SEMICOLON RETURN PRINT COMMA RANGE //Break implement karna baki hai
 %type <c> exp relop_exp
 %type <nData> id
-%type <stmtsptr> stmts
-%type <stmtptr> stmt ifelse_stmt for_loop while_loop var_dec var_assgn exp_stmt print_stmt ret else_stmt
+%type <stmtsptr> stmts else_stmt
+%type <stmtptr> stmt ifelse_stmt for_loop while_loop var_dec var_assgn exp_stmt print_stmt ret 
 %type <relop_cond> relops
 
 %right '='
@@ -167,20 +167,21 @@ for_loop:
         sprintf(load_op_1, "%s\n%s", $2, "move $t1, $t0");
         sprintf(load_op_2, "%s", "li $t2, %d", $7);
 
-        char opration_code[80]; //code for relop of the loop
+        char operation_code[80]; //code for relop of the loop
         char update_code[80]; //code to update VAR
 
         if($5 <= $7){
-            sprintf(opration_code, "%s", "slt $t0, $t1, $t2");
+            sprintf(operation_code, "%s", "slt $t0, $t1, $t2");
             sprintf(update_code,"lw $t0, %s($t8)\naddi $t0, $t0, 1\nsw $t0,%s($t8)\n", $2->addr, $2->addr);
         }
         else{
-            sprintf(opration_code, "%s", "sgt $t0, $t1, $t2");
+            sprintf(operation_code, "%s", "sgt $t0, $t1, $t2");
             sprintf(update_code,"lw $t0, %s($t8)\nsubi $t0, $t0, 1\nsw $t0,%s($t8)\n", $2->addr, $2->addr);
         }
         sprintf($$->initCode, "\n%s\n%s\n%s\n", load_op_1, load_op_2, operation_code);
         sprintf($$->initJumpCode,"beq $t0, $0,");
-        $$->forUpdate = update_code;
+        // $$->forUpdate = update_code;
+        sprintf($$->forUpdate, "%s", update_code);
         $$->down = $10;
     }
     |
@@ -197,20 +198,21 @@ for_loop:
         sprintf(load_op_1, "%s\n%s", $2, "move $t1, $t0");
         sprintf(load_op_2, "%s", "li $t2, %d", $7);
 
-        char opration_code[80]; //code for relop of the loop
+        char operation_code[80]; //code for relop of the loop
         char update_code[80]; //code to update VAR
 
         if($5 <= $7){
-            sprintf(opration_code, "%s", "slt $t0, $t1, $t2");
+            sprintf(operation_code, "%s", "slt $t0, $t1, $t2");
             sprintf(update_code,"lw $t0, %s($t8)\naddi $t0, $t0, 1\nsw $t0,%s($t8)\n", $2->addr, $2->addr);
         }
         else{
-            sprintf(opration_code, "%s", "sgt $t0, $t1, $t2");
+            sprintf(operation_code, "%s", "sgt $t0, $t1, $t2");
             sprintf(update_code,"lw $t0, %s($t8)\nsubi $t0, $t0, 1\nsw $t0,%s($t8)\n", $2->addr, $2->addr);
         }
         sprintf($$->initCode, "\n%s\n%s\n%s\n", load_op_1, load_op_2, operation_code);
         sprintf($$->initJumpCode,"beq $t0, $0,");
-        $$->forUpdate = update_code;
+        // $$->forUpdate = update_code;
+        sprintf($$->forUpdate, "%s", update_code);
         $$->down = (StmtsNode*)malloc(sizeof(StmtsNode));
         $$->down->singl = 1;
         $$->down->left = $10;
@@ -292,7 +294,7 @@ relop_exp:
 
 var_dec:
     ARRAY LPAREN INT ',' id RPAREN VAR {
-        $$ = (StmtsNode*)malloc(sizeof(StmtsNode));
+        $$ = (StmtNode*)malloc(sizeof(StmtNode));
         $$->nodeType = VAR_DEC;
         sprintf($$->bodyCode, "%s\nmul $t0 $t0 4\nsubu $sp $sp $t0\nsw $sp %s($t8)", 
         $5, $7->addr);
@@ -321,7 +323,7 @@ var_assgn:
     }
     |
     VAR '[' id ']' '=' exp_stmt {
-        $$ = (StmtsNode*)malloc(sizeof(StmtsNode));
+        $$ = (StmtNode*)malloc(sizeof(StmtNode));
         $$->nodeType = VAR_ASSGN;
         sprintf($$->bodyCode, "%s\nsubu $sp $sp 4\nsw $t0 ($sp)\n%s\nlw $t1 ($sp)\nmul $t0 $t0 4\nlw $t2 %s($t8)\nadd $t0 $t0 $t2\nadd $t0 $t0 $t8\nsw $t1 ($t0)\naddu $sp $sp 4",
         $6->bodyCode, $3, $1->addr);
@@ -330,7 +332,7 @@ var_assgn:
 
 print_stmt:
     PRINT LPAREN id RPAREN {
-        $$ = (StmtsNode*)malloc(sizeof(StmtsNode));
+        $$ = (StmtNode*)malloc(sizeof(StmtNode));
         $$->nodeType = PRINT_STMT;
         sprintf($$->bodyCode, "%s\nmove $a0 $t0\nli $v0 1\nsyscall",
         $3);
@@ -339,7 +341,7 @@ print_stmt:
 
 ret:
     RETURN NUM {
-        $$ = (StmtsNode*)malloc(sizeof(StmtsNode));
+        $$ = (StmtNode*)malloc(sizeof(StmtNode));
         $$->nodeType = PRINT_STMT;
         sprintf($$->bodyCode, "li $v0 10\nsyscall");
     }
@@ -359,35 +361,43 @@ id:
 
 relops:
     LT {
-        $$ = $1;
+        // $$ = $1;
+        sprintf($$, "%s", $1);
     }
     |
     GT {
-        $$ = $1;
+        // $$ = $1;
+        sprintf($$, "%s", $1);
     }
     |
     LE {
-        $$ = $1;
+        // $$ = $1;
+        sprintf($$, "%s", $1);
     }
     |
     GE {
-        $$ = $1;
+        // $$ = $1;
+        sprintf($$, "%s", $1);
     }
     |
     NE {
-        $$ = $1;
+        // $$ = $1;
+        sprintf($$, "%s", $1);
     }
     |
     EQ {
-        $$ = $1;
+        // $$ = $1;
+        sprintf($$, "%s", $1);
     }
     |
     AND {
-        $$ = $1;
+        // $$ = $1;
+        sprintf($$, "%s", $1);
     }
     |
     OR {
-        $$ = $1;
+        // $$ = $1;
+        sprintf($$, "%s", $1);
     }
     ;
 

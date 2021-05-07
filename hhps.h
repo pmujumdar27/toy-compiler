@@ -1,11 +1,14 @@
+#include <stdlib.h>
+
 /* Data type for links in the chain of symbols.      */
-typedef struct _symrec
+struct _symrec
 {
 	char *name;  /* name of symbol                     */
 	char addr[100];           /* value of a VAR          */
 	struct _symrec *next;    /* link field              */
-} symrec;
+};
 
+typedef struct _symrec symrec;
 
 
 /* The symbol table: a chain of `struct symrec'.     */
@@ -13,9 +16,6 @@ extern symrec *sym_table;
 
 symrec *putsym ();
 symrec *getsym ();
-
-typedef struct StmtsNode *stmtsptr;
-typedef struct StmtNode *stmtptr;
 
 typedef enum {
 	IF_ELSE_STMT,
@@ -31,8 +31,8 @@ typedef enum {
 
 typedef struct _StmtsNode{
 	int singl;
-	struct StmtNode *left;
-	struct StmtsNode *right;
+	struct _StmtNode *left;
+	struct _StmtsNode *right;
 } StmtsNode;
 
 
