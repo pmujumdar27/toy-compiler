@@ -1,6 +1,7 @@
 int main(){
     int x = 5;
     for i range(0, 10){
-        print(i);
+        x = x + 1;
     }
+    print(x);
 }
