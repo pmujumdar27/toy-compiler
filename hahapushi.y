@@ -297,7 +297,7 @@ relop_exp:
     ;
 
 var_dec:
-    ARRAY LPAREN INT ',' id RPAREN VAR {
+    ARRAY LPAREN INT COMMA id RPAREN VAR {
         $$ = (StmtNode*)malloc(sizeof(StmtNode));
         $$->nodeType = VAR_DEC;
         sprintf($$->bodyCode, "%s\nmul $t0 $t0 4\nsubu $sp $sp $t0\nsw $sp %s($t8)", 
@@ -326,11 +326,11 @@ var_assgn:
         sprintf($$->bodyCode, "%s\nsw $t0,%s($t8)\n", $3, $1->addr);
     }
     |
-    VAR '[' id ']' '=' exp_stmt {
+    VAR '[' id ']' '=' exp {
         $$ = (StmtNode*)malloc(sizeof(StmtNode));
         $$->nodeType = VAR_ASSGN;
-        sprintf($$->bodyCode, "%s\nsubu $sp $sp 4\nsw $t0 ($sp)\n%s\nlw $t1 ($sp)\nmul $t0 $t0 4\nlw $t2 %s($t8)\nadd $t0 $t0 $t2\nadd $t0 $t0 $t8\nsw $t1 ($t0)\naddu $sp $sp 4",
-        $6->bodyCode, $3, $1->addr);
+        sprintf($$->bodyCode, "%s\nsubu $sp $sp 4\nsw $t0 ($sp)\n%s\nlw $t1 ($sp)\nmul $t0 $t0 4\nlw $t2 %s($t8)\nadd $t0 $t0 $t2\nsw $t1 ($t0)\naddu $sp $sp 4",
+        $6, $3, $1->addr);
     }
     ;
 
@@ -357,7 +357,7 @@ id:
     NUM {sprintf($$, "li $t0, %d",$1);}
     |
     VAR '[' id ']'{
-        sprintf($$, "%s\nlw $t1 %s($t8)\nmul $t0 $t0 4\nadd $t1 $t1 $t0\nadd $t1 $t1 $t8\nlw $t0 ($t1)",
+        sprintf($$, "%s\nlw $t1 %s($t8)\nmul $t0 $t0 4\nadd $t1 $t1 $t0\nlw $t0 ($t1)",
         $3, $1->addr);
     }
     ;
