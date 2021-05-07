@@ -344,7 +344,7 @@ print_stmt:
     ;
 
 ret:
-    RETURN NUM {
+    RETURN NUM SEMICOLON {
         $$ = (StmtNode*)malloc(sizeof(StmtNode));
         $$->nodeType = PRINT_STMT;
         sprintf($$->bodyCode, "li $v0 10\nsyscall");
@@ -406,13 +406,13 @@ relops:
     ;
 
 exp:
-    exp '+' exp  {sprintf($$,"%s\nsub $sp, $sp, 4\nsw $t0, 0($sp)\n%s\nlw $t1 4($sp)\nadd $t0, $t0, $t1\naddi $sp, $sp, 4", $1, $3);}
-    |   exp '-' exp  {sprintf($$,"%s\nsub $sp, $sp, 4\nsw $t0, 0($sp)\n%s\nlw $t1 4($sp)\nsub $t0, $t0, $t1\naddi $sp, $sp, 4", $1, $3);}
-    |   exp '*' exp  {sprintf($$,"%s\nsub $sp, $sp, 4\nsw $t0, 0($sp)\n%s\nlw $t1 4($sp)\nmul $t0, $t0, $t1\naddi $sp, $sp, 4", $1, $3);}
-    |   exp '/' exp  {sprintf($$,"%s\nsub $sp, $sp, 4\nsw $t0, 0($sp)\n%s\nlw $t1 4($sp)\ndiv $t0, $t0, $t1\naddi $sp, $sp, 4", $1, $3);}
-    |   exp '%' exp  {sprintf($$,"%s\nsub $sp, $sp, 4\nsw $t0, 0($sp)\n%s\nlw $t1 4($sp)\ndiv $t0, $t1\nmfhi $t0\naddi $sp, $sp, 4", $1, $3);}
-    |   exp '&' exp  {sprintf($$,"%s\nsub $sp, $sp, 4\nsw $t0, 0($sp)\n%s\nlw $t1 4($sp)\nand $t0, $t0, $t1\naddi $sp, $sp, 4", $1, $3);}
-    |   exp '|' exp  {sprintf($$,"%s\nsub $sp, $sp, 4\nsw $t0, 0($sp)\n%s\nlw $t1 4($sp)\nor $t0, $t0, $t1\naddi $sp, $sp, 4", $1, $3);}
+    exp '+' exp  {sprintf($$,"%s\nsub $sp, $sp, 4\nsw $t0, 0($sp)\n%s\nlw $t1 0($sp)\nadd $t0, $t0, $t1\naddi $sp, $sp, 4", $1, $3);}
+    |   exp '-' exp  {sprintf($$,"%s\nsub $sp, $sp, 4\nsw $t0, 0($sp)\n%s\nlw $t1 0($sp)\nsub $t0, $t1, $t0\naddi $sp, $sp, 4", $1, $3);}
+    |   exp '*' exp  {sprintf($$,"%s\nsub $sp, $sp, 4\nsw $t0, 0($sp)\n%s\nlw $t1 0($sp)\nmul $t0, $t0, $t1\naddi $sp, $sp, 4", $1, $3);}
+    |   exp '/' exp  {sprintf($$,"%s\nsub $sp, $sp, 4\nsw $t0, 0($sp)\n%s\nlw $t1 0($sp)\ndiv $t0, $t1, $t0\naddi $sp, $sp, 4", $1, $3);}
+    |   exp '%' exp  {sprintf($$,"%s\nsub $sp, $sp, 4\nsw $t0, 0($sp)\n%s\nlw $t1 0($sp)\ndiv $t1, $t0\nmfhi $t0\naddi $sp, $sp, 4", $1, $3);}
+    |   exp '&' exp  {sprintf($$,"%s\nsub $sp, $sp, 4\nsw $t0, 0($sp)\n%s\nlw $t1 0($sp)\nand $t0, $t0, $t1\naddi $sp, $sp, 4", $1, $3);}
+    |   exp '|' exp  {sprintf($$,"%s\nsub $sp, $sp, 4\nsw $t0, 0($sp)\n%s\nlw $t1 0($sp)\nor $t0, $t0, $t1\naddi $sp, $sp, 4", $1, $3);}
     |   LPAREN exp RPAREN  {sprintf($$,"%s\n", $2);}
     |   '-' exp %prec UMINUS     {sprintf($$,"%s\nmuli $t0, $t0, -1", $2);}
     |   id           {sprintf($$,"%s\n", $1);}
