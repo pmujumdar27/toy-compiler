@@ -23,9 +23,9 @@ StmtsNode *stmtsptr;
 %token <val> NUM
 %token <tptr> MAIN VAR
 %token <relop_cond> LT GT LE GE NE EQ AND OR
-%token IF ELSE FOR WHILE ARRAY INT LPAREN RPAREN LCBRACE RCBRACE SEMICOLON RETURN PRINT BREAK COMMA
+%token IF ELSE FOR WHILE ARRAY INT LPAREN RPAREN LCBRACE RCBRACE SEMICOLON RETURN PRINT BREAK COMMA RANGE
 %type <c> exp relop_exp
-%type <nData> x
+%type <nData> id
 %type <stmtsptr> stmts
 %type <stmtptr> stmt ifelse_stmt for_loop while_loop var_dec var_assgn exp_stmt print_stmt ret else_stmt
 %type <relop_cond> relops
@@ -241,29 +241,29 @@ while_loop:
     }
     ;
 
-var_dec:
-    INT VAR '=' exp {
-        $$ = (StmtNode*)malloc(sizeof(StmtNode));
-        $$->nodeType = VAR_DEC;
-        sprintf($$->bodyCode, "%s\nsw $t0,%s($t8)\n", $4, $2->addr);
-        $$->down = NULL;
-    }
-    |
-    INT VAR {
-        $$ = (StmtNode*)malloc(sizeof(StmtNode));
-        $$->nodeType = VAR_DEC;
-        sprintf($$->bodyCode, "li $t0, 0\nsw $t0,%s($t8)\n", $2->addr);
-        $$->down = NULL;
-    }
-    ;
+// var_dec:
+//     INT VAR '=' exp {
+//         $$ = (StmtNode*)malloc(sizeof(StmtNode));
+//         $$->nodeType = VAR_DEC;
+//         sprintf($$->bodyCode, "%s\nsw $t0,%s($t8)\n", $4, $2->addr);
+//         $$->down = NULL;
+//     }
+//     |
+//     INT VAR {
+//         $$ = (StmtNode*)malloc(sizeof(StmtNode));
+//         $$->nodeType = VAR_DEC;
+//         sprintf($$->bodyCode, "li $t0, 0\nsw $t0,%s($t8)\n", $2->addr);
+//         $$->down = NULL;
+//     }
+//     ;
 
-var_assgn:
-    VAR '=' exp {
-        $$ = (StmtNode*)malloc(sizeof(StmtNode));
-        $$->nodeType = VAR_ASSGN;
-        sprintf($$->bodyCode, "%s\nsw $t0,%s($t8)\n", $3, $1->addr);
-    }
-    ;
+// var_assgn:
+//     VAR '=' exp {
+//         $$ = (StmtNode*)malloc(sizeof(StmtNode));
+//         $$->nodeType = VAR_ASSGN;
+//         sprintf($$->bodyCode, "%s\nsw $t0,%s($t8)\n", $3, $1->addr);
+//     }
+//     ;
 
 exp_stmt:
     exp SEMICOLON {
@@ -289,6 +289,73 @@ relop_exp:
         sprintf($$, "%s\nmove $t1, $t0\nsne $t0, $t1, $0", $1);
     }
     ;
+
+var_dec:
+    ARRAY LPAREN INT ',' id RPAREN VAR {
+        $$ = (StmtsNode*)malloc(sizeof(StmtsNode));
+        $$->nodeType = VAR_DEC;
+        sprintf($$->bodyCode, "%s\nmul $t0 $t0 4\nsubu $sp $sp $t0\nsw $sp %s($t8)", 
+        $5, $7->addr);
+    }
+    | 
+    INT VAR '=' exp {
+        $$ = (StmtNode*)malloc(sizeof(StmtNode));
+        $$->nodeType = VAR_DEC;
+        sprintf($$->bodyCode, "%s\nsw $t0,%s($t8)\n", $4, $2->addr);
+        $$->down = NULL;
+    }
+    |
+    INT VAR {
+        $$ = (StmtNode*)malloc(sizeof(StmtNode));
+        $$->nodeType = VAR_DEC;
+        sprintf($$->bodyCode, "li $t0, 0\nsw $t0,%s($t8)\n", $2->addr);
+        $$->down = NULL;
+    }
+    ;
+
+var_assgn:
+    VAR '=' exp {
+        $$ = (StmtNode*)malloc(sizeof(StmtNode));
+        $$->nodeType = VAR_ASSGN;
+        sprintf($$->bodyCode, "%s\nsw $t0,%s($t8)\n", $3, $1->addr);
+    }
+    |
+    VAR '[' id ']' '=' exp_stmt {
+        $$ = (StmtsNode*)malloc(sizeof(StmtsNode));
+        $$->nodeType = VAR_ASSGN;
+        sprintf($$->bodyCode, "%s\nsubu $sp $sp 4\nsw $t0 ($sp)\n%s\nlw $t1 ($sp)\nmul $t0 $t0 4\nlw $t2 %s($t8)\nadd $t0 $t0 $t2\nadd $t0 $t0 $t8\nsw $t1 ($t0)\naddu $sp $sp 4",
+        $6->bodyCode, $3, $1->addr);
+    }
+    ;
+
+print_stmt:
+    PRINT LPAREN id RPAREN {
+        $$ = (StmtsNode*)malloc(sizeof(StmtsNode));
+        $$->nodeType = PRINT_STMT;
+        sprintf($$->bodyCode, "%s\nmove $a0 $t0\nli $v0 1\nsyscall",
+        $3);
+    }
+    ;
+
+ret:
+    RETURN NUM {
+        $$ = (StmtsNode*)malloc(sizeof(StmtsNode));
+        $$->nodeType = PRINT_STMT;
+        sprintf($$->bodyCode, "li $v0 10\nsyscall");
+    }
+    ;
+
+id:
+    VAR {sprintf($$, "lw $t0, %s($t8)",$1->addr);}
+    |   
+    NUM {sprintf($$, "li $t0, %d",$1);}
+    |
+    VAR '[' id ']'{
+        sprintf($$, "%s\nlw $t1 %s($t8)\nmul $t0 $t0 4\nadd $t1 $t1 $t0\nadd $t1 $t1 $t8\nlw $t0 ($t1)",
+        $3, $1->addr);
+    }
+    ;
+
 
 relops:
     LT {
@@ -325,20 +392,20 @@ relops:
     ;
 
 exp:
-    exp "+" exp  {sprintf($$,"%s\nsub $sp, $sp, 4\nsw $t0, 0($sp)\n%s\nlw $t1 4($sp)\nadd $t0, $t0, $t1\naddi $sp, $sp, 4", $1, $3);}
-    |   exp "-" exp  {sprintf($$,"%s\nsub $sp, $sp, 4\nsw $t0, 0($sp)\n%s\nlw $t1 4($sp)\nsub $t0, $t0, $t1\naddi $sp, $sp, 4", $1, $3);}
-    |   exp "*" exp  {sprintf($$,"%s\nsub $sp, $sp, 4\nsw $t0, 0($sp)\n%s\nlw $t1 4($sp)\nmul $t0, $t0, $t1\naddi $sp, $sp, 4", $1, $3);}
-    |   exp "/" exp  {sprintf($$,"%s\nsub $sp, $sp, 4\nsw $t0, 0($sp)\n%s\nlw $t1 4($sp)\ndiv $t0, $t0, $t1\naddi $sp, $sp, 4", $1, $3);}
-    |   exp "%" exp  {sprintf($$,"%s\nsub $sp, $sp, 4\nsw $t0, 0($sp)\n%s\nlw $t1 4($sp)\ndiv $t0, $t1\nmfhi $t0\naddi $sp, $sp, 4", $1, $3);}
-    |   exp "&" exp  {sprintf($$,"%s\nsub $sp, $sp, 4\nsw $t0, 0($sp)\n%s\nlw $t1 4($sp)\nand $t0, $t0, $t1\naddi $sp, $sp, 4", $1, $3);}
-    |   exp "|" exp  {sprintf($$,"%s\nsub $sp, $sp, 4\nsw $t0, 0($sp)\n%s\nlw $t1 4($sp)\nor $t0, $t0, $t1\naddi $sp, $sp, 4", $1, $3);}
-    |   "(" exp ")"  {sprintf($$,"%s\n", $2);}
-    |   "-" exp %prec UMINUS     {sprintf($$,"%s\nmuli $t0, $t0, -1", $2);}
+    exp '+' exp  {sprintf($$,"%s\nsub $sp, $sp, 4\nsw $t0, 0($sp)\n%s\nlw $t1 4($sp)\nadd $t0, $t0, $t1\naddi $sp, $sp, 4", $1, $3);}
+    |   exp '-' exp  {sprintf($$,"%s\nsub $sp, $sp, 4\nsw $t0, 0($sp)\n%s\nlw $t1 4($sp)\nsub $t0, $t0, $t1\naddi $sp, $sp, 4", $1, $3);}
+    |   exp '*' exp  {sprintf($$,"%s\nsub $sp, $sp, 4\nsw $t0, 0($sp)\n%s\nlw $t1 4($sp)\nmul $t0, $t0, $t1\naddi $sp, $sp, 4", $1, $3);}
+    |   exp '/' exp  {sprintf($$,"%s\nsub $sp, $sp, 4\nsw $t0, 0($sp)\n%s\nlw $t1 4($sp)\ndiv $t0, $t0, $t1\naddi $sp, $sp, 4", $1, $3);}
+    |   exp '%' exp  {sprintf($$,"%s\nsub $sp, $sp, 4\nsw $t0, 0($sp)\n%s\nlw $t1 4($sp)\ndiv $t0, $t1\nmfhi $t0\naddi $sp, $sp, 4", $1, $3);}
+    |   exp '&' exp  {sprintf($$,"%s\nsub $sp, $sp, 4\nsw $t0, 0($sp)\n%s\nlw $t1 4($sp)\nand $t0, $t0, $t1\naddi $sp, $sp, 4", $1, $3);}
+    |   exp '|' exp  {sprintf($$,"%s\nsub $sp, $sp, 4\nsw $t0, 0($sp)\n%s\nlw $t1 4($sp)\nor $t0, $t0, $t1\naddi $sp, $sp, 4", $1, $3);}
+    |   LPAREN exp RPAREN  {sprintf($$,"%s\n", $2);}
+    |   '-' exp %prec UMINUS     {sprintf($$,"%s\nmuli $t0, $t0, -1", $2);}
     |   id           {sprintf($$,"%s\n", $1);}
     ;
 
-id:
-    VAR {sprintf($$, "lw $t0, %s($t8)",$1->addr);}
-    |   NUM {sprintf($$, "li $t0, %d",$1);}
-    ;
+// id:
+//     VAR {sprintf($$, "lw $t0, %s($t8)",$1->addr);}
+//     |   NUM {sprintf($$, "li $t0, %d",$1);}
+//     ;
 %%
