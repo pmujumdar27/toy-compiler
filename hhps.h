@@ -1,5 +1,5 @@
-#ifndef _HHPS_H_
-#define _HHPS_H_
+#ifndef HHPS_H
+#define HHPS_H
 /* Data type for links in the chain of symbols.      */
 struct symrec
 {
@@ -47,11 +47,11 @@ typedef struct _StmtNode{
 	StmtsNode *down;
 } StmtNode;
 
-char *get_new_label(char *label_type, int label_count) {
-    size_t buffsz = strlen(label_type) + 8;
-    char *buf = malloc(buffsz);
-    snprintf(buf, buffsz, ".%s_%d", label_type, label_count);
-    return buf;
-}
+// char *get_new_label(char *label_type, int label_count) {
+//     size_t buffsz = strlen(label_type) + 8;
+//     char *buf = malloc(buffsz);
+//     snprintf(buf, buffsz, ".%s_%d", label_type, label_count);
+//     return buf;
+// }
 
 #endif

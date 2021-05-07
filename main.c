@@ -130,7 +130,7 @@ void StmtTrav(StmtNode *root){
     }
 }
 
-int main(int argc, char *argv[]){
+int main(){
     fp=fopen("asmb.asm","w");
     fprintf(fp,".data\n\n.text\nli $t8,268500992\n");
     yyparse();
