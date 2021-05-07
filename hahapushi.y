@@ -27,7 +27,7 @@ StmtsNode *stmtsptr;
 %type <c> exp relop_exp
 %type <nData> x
 %type <stmtsptr> stmts
-%type <stmtptr> stmt ifelse_stmt for_loop while_loop var_dec var_assgn exp_stmt print_stmt ret
+%type <stmtptr> stmt ifelse_stmt for_loop while_loop var_dec var_assgn exp_stmt print_stmt ret else_stmt
 %type <relop_cond> relops
 
 %right '='
@@ -98,10 +98,65 @@ stmt:
     }
     ;
 
+ifelse_stmt:
+    IF LPAREN relop_exp RPAREN LCBRACE stmts RCBRACE else_stmt {
+        $$ = (StmtNode*)malloc(sizeof(StmtNode));
+        $$->nodeType = IF_ELSE_STMT;
+        sprintf($$->bodyCode,"%s", $3);
+        sprintf($$->initJumpCode,"beq $t0, $0,");
+        $$->down = $6;
+        $$->elseCode = $8;
+    }
+    |
+    IF LPAREN relop_exp RPAREN stmt else_stmt {
+        $$ = (StmtNode*)malloc(sizeof(StmtNode));
+        $$->nodeType = IF_ELSE_STMT;
+        sprintf($$->bodyCode,"%s", $3);
+        sprintf($$->initJumpCode,"beq $t0, $0,");
+        $$->down = (StmtsNode*)malloc(sizeof(StmtsNode));
+        $$->down->singl = 1;
+        $$->down->left = $5;
+        $$->down->right = NULL;
+        $$->elseCode = $6;
+    }
+    |
+    IF LPAREN relop_exp RPAREN LCBRACE stmts RCBRACE {
+        $$ = (StmtNode*)malloc(sizeof(StmtNode));
+        $$->nodeType = IF_ELSE_STMT;
+        sprintf($$->bodyCode,"%s", $3);
+        sprintf($$->initJumpCode,"beq $t0, $0,");
+        $$->down = $6;
+    }
+    |
+    IF LPAREN relop_exp RPAREN stmt {
+        $$ = (StmtNode*)malloc(sizeof(StmtNode));
+        $$->nodeType = IF_ELSE_STMT;
+        sprintf($$->bodyCode,"%s", $3);
+        sprintf($$->initJumpCode,"beq $t0, $0,");
+        $$->down = (StmtsNode*)malloc(sizeof(StmtsNode));
+        $$->down->singl = 1;
+        $$->down->left = $5;
+        $$->down->right = NULL;
+    }
+    ;
+
+else_stmt:
+    ELSE LCBRACE stmts RCBRACE {
+        $$ = $3;
+    }
+    |
+    ELSE stmt {
+        $$ = (StmtsNode*)malloc(sizeof(StmtsNode));
+        $$->singl = 1;
+        $$->left = $2;
+        $$->right = NULL;
+    }
+    ;
+
 for_loop:
     FOR VAR RANGE LPAREN NUM COMMA NUM RPAREN LCBRACE stmts RCBRACE {
         $$ = (StmtNode*)malloc(sizeof(StmtNode));
-        $$->nodeType =FOR_LOOP;
+        $$->nodeType = FOR_LOOP;
         
         // assigning VAR the value of $5
         sprintf($$->forIter,"%s\nsw $t0,%s($t8)\n", $5, $2->addr);
@@ -183,6 +238,39 @@ while_loop:
         $$->down->singl = 1;
         $$->down->left = $5;
         $$->down->right = NULL;
+    }
+    ;
+
+var_dec:
+    INT VAR '=' exp {
+        $$ = (StmtNode*)malloc(sizeof(StmtNode));
+        $$->nodeType = VAR_DEC;
+        sprintf($$->bodyCode, "%s\nsw $t0,%s($t8)\n", $4, $2->addr);
+        $$->down = NULL;
+    }
+    |
+    INT VAR {
+        $$ = (StmtNode*)malloc(sizeof(StmtNode));
+        $$->nodeType = VAR_DEC;
+        sprintf($$->bodyCode, "li $t0, 0\nsw $t0,%s($t8)\n", $2->addr);
+        $$->down = NULL;
+    }
+    ;
+
+var_assgn:
+    VAR '=' exp {
+        $$ = (StmtNode*)malloc(sizeof(StmtNode));
+        $$->nodeType = VAR_ASSGN;
+        sprintf($$->bodyCode, "%s\nsw $t0,%s($t8)\n", $3, $1->addr);
+    }
+    ;
+
+exp_stmt:
+    exp SEMICOLON {
+        $$ = (StmtNode*)malloc(sizeof(StmtNode));
+        $$->nodeType = EXP_STMT;
+        sprintf($$->bodyCode, "%s\n", $1);
+        $$->down = NULL;
     }
     ;
 

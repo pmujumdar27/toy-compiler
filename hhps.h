@@ -39,10 +39,17 @@ typedef struct _StmtsNode{
 typedef struct _StmtNode{
 	StmtType nodeType;
 	char initCode[100];
-	char initJumpCode[20];
+	char initJumpCode[80];
 	char bodyCode[1000];
-	char elseCode[1000];
 	char forIter[100];
 	char forUpdate[100];
-	struct StmtsNode *down;
+	StmtsNode *elseCode;
+	StmtsNode *down;
 } StmtNode;
+
+char *get_new_label(char *label_type, int label_count) {
+    size_t buffsz = strlen(label_type) + 8;
+    char *buf = malloc(buffsz);
+    snprintf(buf, buffsz, ".%s_%d", label_type, label_count);
+    return buf;
+}
