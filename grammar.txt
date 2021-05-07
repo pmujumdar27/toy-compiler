@@ -29,7 +29,8 @@ var_dec -> TYPE VAR "=" exp_stmt |
             ARRAY "(" TYPE, ID ")" VAR "=" "{" id_chain "}" ";" 
 
 var_assgn ->  VAR "=" exp_stmt |
-              
+              VAR [id] = exp_stmt
+
 
 
 exp_stmt -> exp ";"
