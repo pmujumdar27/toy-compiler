@@ -168,7 +168,11 @@ for_loop:
         char load_op_1[80]; //loads value of VAR and stores it in $t1
         char load_op_2[80]; //loads value of $7  and stores it in $t2
 
-        sprintf(load_op_1, "%s\n%s\n", $2, "move $t1, $t0");
+        load_op_1[0] = '\0';
+        load_op_2[0] = '\0';
+
+        // sprintf(load_op_1, "%s\n%s\n", $2, "move $t1, $t0");
+        sprintf(load_op_1, "lw $t1, %s($t8)\n", $2->addr);
         sprintf(load_op_2, "%s\nmove $t2 $t0\n", $7);
 
         char operation_code[80]; //code for relop of the loop
@@ -200,8 +204,11 @@ for_loop:
 
         char load_op_1[80]; //loads value of VAR and stores it in $t1
         char load_op_2[80]; //loads value of $7  and stores it in $t2
+        load_op_1[0] = '\0';
+        load_op_2[0] = '\0';
 
-        sprintf(load_op_1, "%s\n%s", $2, "move $t1, $t0");
+        // sprintf(load_op_1, "%s\n%s", $2, "move $t1, $t0");
+        sprintf(load_op_1, "lw $t1, %s($t8)\n", $2->addr);
         sprintf(load_op_2, "%s\nmove $t2 $t0", $7);
 
         char operation_code[80]; //code for relop of the loop
