@@ -1,0 +1,8 @@
+int main(){
+    int x = 6;
+    int ans = 1;
+    for i range(1, x){
+        ans = ans*i;
+    }
+    print(ans);
+}
