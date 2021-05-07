@@ -143,6 +143,23 @@ var_assgn:
     }
     ;
 
+print_stmt:
+    PRINT LPAREN id RPAREN {
+        $$ = (StmtsNode*)malloc(sizeof(StmtsNode));
+        $$->nodeType = PRINT_STMT;
+        sprintf($$->bodyCode, "%s\nmove $a0 $t0\nli $v0 1\nsyscall",
+        $3);
+    }
+    ;
+
+ret:
+    RETURN NUM {
+        $$ = (StmtsNode*)malloc(sizeof(StmtsNode));
+        $$->nodeType = PRINT_STMT;
+        sprintf($$->bodyCode, "li $v0 10\nsyscall");
+    }
+    ;
+
 id:
     VAR {sprintf($$, "lw $t0, %s($t8)",$1->addr);}
     |   
