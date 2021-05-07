@@ -41,9 +41,10 @@ void StmtTrav(StmtNode *root){
             char *if_end = get_new_label("if_end", lcnt);
 
             // relop condition code
+            fprintf(fp, "#Relop condn code\n");
             fprintf(fp, "%s\n", root->bodyCode);
 
-            StmtsTrav(root->down);
+            // StmtsTrav(root->down);
 
             if(root->elseCode == NULL){
                 // jump to end if relop gives false
