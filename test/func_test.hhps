@@ -2,14 +2,16 @@ decl int fun_square(){
     x = x*x;
 }
 
-decl int fun_incr(){
-    x = x+1;
-    y = y+1;
+decl int fun_fib(){
+    tot = 0;
+    for i range(1, a){
+        tot = tot+i;
+        print(tot);
+    }
 }
 
 int main(){
     int x = 5;
-    fun_incr(x = 5, y = 6);
-    print(x);
-    print(y);
+    int a = 5;
+    fun_fib(a = 5);
 }
