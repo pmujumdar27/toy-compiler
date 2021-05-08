@@ -59,7 +59,7 @@ void StmtTrav(StmtNode *root){
                 StmtsTrav(root->down);
 
                 // print code to jump to end of if statement
-                fprintf(fp, "j %s\n%s:\n", if_end);
+                fprintf(fp, "j %s\n", if_end);
 
                 // mark the start of else part
                 fprintf(fp, "%s:\n", else_label); 
