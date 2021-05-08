@@ -26,7 +26,9 @@ typedef enum {
 	VAR_ASSGN,
 	EXP_STMT,
 	PRINT_STMT,
-	RETURN_STMT
+	RETURN_STMT,
+	FUNC_CALL,
+	FUNC_DEC
 } StmtType;
 
 typedef struct _StmtsNode{

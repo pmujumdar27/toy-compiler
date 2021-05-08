@@ -9,6 +9,7 @@
 
 FILE *fp;
 StmtsNode *root;
+StmtsNode *funcs;
 int lcnt = 0;
 
 char *get_new_label(char *label_type, int label_count) {
@@ -120,21 +121,18 @@ void StmtTrav(StmtNode *root){
             fprintf(fp,"j %s\n%s:", while_start, while_end);
 
             break;
-        // case VAR_DEC:
-        //     /* code */
-        //     break;
-        // case VAR_ASSGN:
-        //     /* code */
-        //     break;
-        // case EXP_STMT:
-        //     /* code */
-        //     break;
-        // case PRINT_STMT:
-        //     /* code */
-        //     break;
-        // case RETURN_STMT:
-        //     /* code */
-        //     break;
+
+        case FUNC_DEC:
+            fprintf(fp, "%s\n", root->initCode);
+            StmtsTrav(root->down);
+            fprintf(fp, "\njr $ra\n");
+            break;
+
+        case FUNC_CALL:
+            fprintf(fp, "#Entered function call\n");
+            StmtsTrav(root->down);
+            fprintf(fp, "%s\n", root->bodyCode);
+            break;
         
         default:
             fprintf(fp,"%s\n",root->bodyCode);
@@ -148,6 +146,8 @@ int main(){
     fprintf(fp,".data\n\n.text\nli $t8,268500992\n");
     yyparse();
     StmtsTrav(root);
+    fprintf(fp, "li $v0, 10\nsyscall\n");
+    StmtsTrav(funcs);
     // fprintf(fp,"\nli $v0,1\nmove $a0,$t0\nsyscall\n");
     fclose(fp);
 
