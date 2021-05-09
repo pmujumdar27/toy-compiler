@@ -77,16 +77,6 @@ fun_decs:
     }
     ;
 
-/* args_trail:
-    INT VAR COMMA args_trail {
-        ;
-    }
-    |
-    INT VAR {
-        ;
-    }
-    ; */
-
 fun_dec:
     INT FUN LPAREN RPAREN LCBRACE stmts RCBRACE {
         printf("\nEntered function declearation of: %s\n", $2->name);

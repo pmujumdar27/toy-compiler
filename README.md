@@ -1,4 +1,4 @@
-### Compiler for HHPS
+## Compiler for HHPS
 ### 💻
 
 ---
@@ -28,6 +28,7 @@ This is a compiler - a toy of sorts - written using ```flex```, ```bison``` and 
    - [Logical Operators](#logical-operators)
 - [Grammar](#grammar)
 - [Directory Structure](#directory-structure)
+- [References](#references)
 
 ---
 
@@ -45,16 +46,21 @@ It is a language with simple and intuitive syntax and grammar. It can be used by
 
 - ✔️ Integer data type
 - ✔️ Relational operators
+- ✔️ Arithmetic operators
 - ✔️ If-else conditionals
 - ✔️ Nested conditionals
 - ✔️ While loop
 - ✔️ Nested while loops
 - ✔️ For loop (similar to python)
+- ✔️ Nested For loop
 - ✔️ Arrays
 - ✔️ Function calls
-- ✔️ Verbose error reporting ❗
+- ✔️ Return statements
+- ✔️ Verbose error reporting (with line number) ❗
 - ✔️ Multi-line comments
+- ✔️ Input feature
 - ✔️ Print statement for output
+- ✔️ Print statement with newline
 
 ---
 
@@ -97,12 +103,12 @@ Multi-line comments : Anything between /* and */
 - ```decl``` Declare function
 - ```main``` Main function
 - ```return``` Function Return
-- ```print``` Write to Console
+- ```print``` Print to console
+- ```println``` Print with newline
 
 # Special Characters
 
-- ```\n``` Newline Character
-- ```\t``` Tab
+- ```\n``` Newline Character (error reporting)
 - ```;``` End of Statement
 
 # Arithmetic Operators
@@ -170,4 +176,36 @@ toy-compiler
 ## Sample Programs:
 ## ⌨️
 
+Sample code for Bubblesort written in `HHPS`
+```
+int main(){
+    array (int, 10) a;
+    for i range(0, 10){
+        a[i] = 10-i;
+    } 
+    for i range(0, 10){
+        int t = 9-i;
+        for j range(0, t){
+            if (a[j] > a[j+1]){
+                int temp = a[j];
+                a[j] = a[j+1];
+                a[j+1] = temp;
+            }
+        }
+    }
+
+    for i range(0, 10){
+        println(a[i]);
+    }
+
+    return 0;
+}
+```
+
 For sample programs covering all features, refer the [test](./test/) folder.
+
+## References:
+
+- Code used in Compilers Labs {9,10,11}
+- https://www.gnu.org/software/bison/manual/html_node/Mfcalc-Symbol-Table.html
+- MIPS_Instruction_Set.pdf (unive.it)
