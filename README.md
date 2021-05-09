@@ -256,3 +256,4 @@ For sample programs covering all features, refer the [test](./test/) folder.
 - Code used in Compilers Labs {9,10,11}
 - https://www.gnu.org/software/bison/manual/html_node/Mfcalc-Symbol-Table.html
 - MIPS_Instruction_Set.pdf (unive.it)
+- Compiler Construction using Flex and Bison, Anthony A. Aaby
