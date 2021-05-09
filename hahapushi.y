@@ -152,7 +152,7 @@ stmt:
         $$ = $1;
     }
     |
-    func_call {
+    func_call SEMICOLON {
         $$ = $1;
     }
     |
@@ -317,30 +317,6 @@ while_loop:
     }
     ;
 
-// var_dec:
-//     INT VAR '=' exp {
-//         $$ = (StmtNode*)malloc(sizeof(StmtNode));
-//         $$->nodeType = VAR_DEC;
-//         sprintf($$->bodyCode, "%s\nsw $t0,%s($t8)\n", $4, $2->addr);
-//         $$->down = NULL;
-//     }
-//     |
-//     INT VAR {
-//         $$ = (StmtNode*)malloc(sizeof(StmtNode));
-//         $$->nodeType = VAR_DEC;
-//         sprintf($$->bodyCode, "li $t0, 0\nsw $t0,%s($t8)\n", $2->addr);
-//         $$->down = NULL;
-//     }
-//     ;
-
-// var_assgn:
-//     VAR '=' exp {
-//         $$ = (StmtNode*)malloc(sizeof(StmtNode));
-//         $$->nodeType = VAR_ASSGN;
-//         sprintf($$->bodyCode, "%s\nsw $t0,%s($t8)\n", $3, $1->addr);
-//     }
-//     ;
-
 exp_stmt:
     exp SEMICOLON {
         $$ = (StmtNode*)malloc(sizeof(StmtNode));
@@ -393,14 +369,26 @@ var_assgn:
     VAR '=' exp {
         $$ = (StmtNode*)malloc(sizeof(StmtNode));
         $$->nodeType = VAR_ASSGN;
+        $$->down = NULL;
         sprintf($$->bodyCode, "%s\nsw $t0,%s($t8)\n", $3, $1->addr);
     }
     |
     VAR '[' id ']' '=' exp {
         $$ = (StmtNode*)malloc(sizeof(StmtNode));
         $$->nodeType = VAR_ASSGN;
+        $$->down = NULL;
         sprintf($$->bodyCode, "%s\nsubu $sp $sp 4\nsw $t0 ($sp)\n%s\nlw $t1 ($sp)\nmul $t0 $t0 4\nlw $t2 %s($t8)\nadd $t0 $t0 $t2\nsw $t1 ($t0)\naddu $sp $sp 4",
         $6, $3, $1->addr);
+    }
+    |
+    VAR '=' func_call {
+        $$ = (StmtNode*)malloc(sizeof(StmtNode));
+        $$->nodeType = VAR_ASSGN;
+        $$->down = (StmtsNode*)malloc(sizeof(StmtsNode));
+        $$->down->singl = 1;
+        $$->down->left = $3;
+        $$->down->right = NULL;
+        sprintf($$->bodyCode, "%s\nsw $t0,%s($t8)\n", $3, $1->addr);
     }
     ;
 
@@ -436,10 +424,11 @@ print_stmt:
     ;
 
 ret:
-    RETURN NUM SEMICOLON {
+    RETURN exp SEMICOLON {
         $$ = (StmtNode*)malloc(sizeof(StmtNode));
-        $$->nodeType = PRINT_STMT;
-        sprintf($$->bodyCode, "li $v0 10\nsyscall");
+        $$->nodeType = RETURN_STMT;
+        // sprintf($$->bodyCode, "li $v0 10\nsyscall");
+        sprintf($$->bodyCode, "%s", $2);
     }
     ;
 
@@ -498,7 +487,7 @@ relops:
     ;
 
 func_call:
-    FUN LPAREN param_trail RPAREN SEMICOLON {
+    FUN LPAREN param_trail RPAREN {
         $$ = (StmtNode*)malloc(sizeof(StmtNode));
         $$->nodeType = FUNC_CALL;
         $$->down = $3;
@@ -549,8 +538,4 @@ exp:
     |   id           {sprintf($$,"%s\n", $1);}
     ;
 
-// id:
-//     VAR {sprintf($$, "lw $t0, %s($t8)",$1->addr);}
-//     |   NUM {sprintf($$, "li $t0, %d",$1);}
-//     ;
 %%

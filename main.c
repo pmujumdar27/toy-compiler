@@ -11,6 +11,7 @@ FILE *fp;
 StmtsNode *root;
 StmtsNode *funcs;
 int lcnt = 0;
+int ismain = 0;
 
 char *get_new_label(char *label_type, int label_count) {
     size_t buffsz = strlen(label_type) + 8;
@@ -133,6 +134,25 @@ void StmtTrav(StmtNode *root){
             StmtsTrav(root->down);
             fprintf(fp, "%s\n", root->bodyCode);
             break;
+
+        case RETURN_STMT:
+            ;
+            fprintf(fp, "%s\n", root->bodyCode);
+            if(ismain){
+                ;
+            }
+            else{
+                fprintf(fp, "\njr $ra\n");
+            }
+            break;
+
+        case VAR_ASSGN:
+            ;
+            if(root->down != NULL){
+                StmtsTrav(root->down);
+            }
+            fprintf(fp, "%s\n", root->bodyCode);
+            break;
         
         default:
             fprintf(fp,"%s\n",root->bodyCode);
@@ -145,8 +165,10 @@ int main(){
     fp=fopen("asmb.asm","w");
     fprintf(fp,".data\npromptMessage: .asciiz \"Enter number: \"\nnl: .asciiz \"\\n\"\n.text\nli $t8,268500992\n");
     yyparse();
+    ismain = 1;
     StmtsTrav(root);
     fprintf(fp, "li $v0, 10\nsyscall\n");
+    ismain = 0;
     StmtsTrav(funcs);
     // fprintf(fp,"\nli $v0,1\nmove $a0,$t0\nsyscall\n");
     fclose(fp);
