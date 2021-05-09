@@ -35,7 +35,7 @@ StmtsNode *stmtsptr;
 %type <c> exp relop_exp
 %type <nData> id
 %type <stmtsptr> stmts else_stmt func_block fun_decs param_trail
-%type <stmtptr> stmt ifelse_stmt for_loop while_loop var_dec var_assgn exp_stmt print_stmt ret func_call fun_dec input_stmt
+%type <stmtptr> stmt ifelse_stmt for_loop while_loop var_dec var_assgn print_stmt ret func_call fun_dec input_stmt
 %type <relop_cond> relops
 
 %right '='
@@ -137,10 +137,6 @@ stmt:
     }
     |
     var_assgn SEMICOLON {
-        $$ = $1;
-    }
-    |
-    exp_stmt {
         $$ = $1;
     }
     |
@@ -317,15 +313,6 @@ while_loop:
     }
     ;
 
-exp_stmt:
-    exp SEMICOLON {
-        $$ = (StmtNode*)malloc(sizeof(StmtNode));
-        $$->nodeType = EXP_STMT;
-        sprintf($$->bodyCode, "%s\n", $1);
-        $$->down = NULL;
-    }
-    ;
-
 relop_exp:
     // registers used: $t0, $t1, $t2
     // value set in register: $t0
@@ -373,7 +360,7 @@ var_assgn:
         sprintf($$->bodyCode, "%s\nsw $t0,%s($t8)\n", $3, $1->addr);
     }
     |
-    VAR '[' id ']' '=' exp {
+    VAR '[' exp ']' '=' exp {
         $$ = (StmtNode*)malloc(sizeof(StmtNode));
         $$->nodeType = VAR_ASSGN;
         $$->down = NULL;
@@ -408,14 +395,14 @@ input_stmt:
     ;
 
 print_stmt:
-    PRINT LPAREN id RPAREN SEMICOLON {
+    PRINT LPAREN exp RPAREN SEMICOLON {
         $$ = (StmtNode*)malloc(sizeof(StmtNode));
         $$->nodeType = PRINT_STMT;
         sprintf($$->bodyCode, "%s\nmove $a0 $t0\nli $v0 1\nsyscall",
         $3);
     }
     |
-    PRINTLN LPAREN id RPAREN SEMICOLON {
+    PRINTLN LPAREN exp RPAREN SEMICOLON {
         $$ = (StmtNode*)malloc(sizeof(StmtNode));
         $$->nodeType = PRINT_STMT;
         sprintf($$->bodyCode, "%s\nmove $a0 $t0\nli $v0 1\nsyscall\nli $v0, 4\nla $a0, nl\nsyscall",
@@ -437,7 +424,7 @@ id:
     |   
     NUM {sprintf($$, "li $t0, %d",$1);}
     |
-    VAR '[' id ']'{
+    VAR '[' exp ']'{
         sprintf($$, "%s\nlw $t1 %s($t8)\nmul $t0 $t0 4\nadd $t1 $t1 $t0\nlw $t0 ($t1)",
         $3, $1->addr);
     }
