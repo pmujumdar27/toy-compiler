@@ -8,12 +8,13 @@
 
 void yyerror (char *s);
 int yylex();
+extern int line;
 
 StmtsNode *root;
 StmtsNode *funcs;
 
 void yyerror(char *s){
-    printf("%s\n", s);
+    printf("Error in line %d: %s\n", line, s);
 }
 %}
 

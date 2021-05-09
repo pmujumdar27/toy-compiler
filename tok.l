@@ -5,7 +5,7 @@
 #include <string.h>
 #include "hhps.h"
 #include "hahapushi.tab.h"
-int line = 0;
+int line = 1;
 int indent = 0;
 int Adr=100;
 symrec *sym_table = (symrec *)0;
