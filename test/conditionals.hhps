@@ -1,0 +1,53 @@
+int main(){
+    int x = 5;
+    if(x == 5){
+        println(1);
+    }
+    else{
+        println(0);
+    }
+    if(x != 5){
+        println(1);
+    }
+    else{
+        println(0);
+    }
+    if(x >= 5){
+        println(1);
+    }
+    else{
+        println(0);
+    }
+    if(x <= 5){
+        println(1);
+    }
+    else{
+        println(0);
+    }
+    if(x < 5){
+        println(1);
+    }
+    else{
+        println(0);
+    }
+    if(x > 5){
+        println(1);
+    }
+    else{
+        println(0);
+    }
+    int y = 0;
+    int z = 1;
+    if(y && z){
+        println(1);
+    }
+    else{
+        println(0);
+    }
+    if(y || z){
+        println(1);
+    }
+    else{
+        println(0);
+    }
+}

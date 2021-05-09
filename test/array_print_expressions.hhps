@@ -1,0 +1,25 @@
+int main(){
+    array (int, 10) a;
+    for i range(0, 10){
+        a[i] = i;
+    }
+
+    for i range(0, 10){
+        println(a[i]);
+    }
+
+    for i range(1, 10){
+        a[i] = a[i-1] + a[i];
+    }
+
+    for i range(0, 10){
+        println(a[i] * 10);
+    }
+
+    println(0);
+    for i range(0, 5){
+        println(3*9 + 2);
+    }
+
+    return 0;
+}

@@ -3,12 +3,12 @@ int main(){
     int b = 10;
     int c = 0;
     while (c<b){
-        a[c] = c;
-        c=c+1;
+        input(a[c]);
+        c = c+1;
     }
     c = 0;
     while (c<b){
-        println(a[c]);
+        print(a[c]);
         c=c+1;
     }
     return 0;

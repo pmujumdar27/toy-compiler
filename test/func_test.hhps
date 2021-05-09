@@ -1,17 +1,21 @@
 decl int fun_square(){
-    x = x*x;
+    y = y*y;
+    return y;
 }
 
 decl int fun_fib(){
     tot = 0;
     for i range(1, a){
         tot = tot+i;
-        print(tot);
+        println(tot);
     }
 }
 
 int main(){
     int x = 5;
     int a = 5;
+    int b = 0;
     fun_fib(a = 5);
+    b = fun_square(y = x);
+    println(b);
 }

@@ -1,0 +1,11 @@
+int main(){
+    int x = 15;
+    int y = 8;
+    int z = 4;
+    int ansA = 0;
+    int ansB = 0;
+    ansA = x%y;
+    ansB = y%z;
+    println(ansA);
+    println(ansB);
+}

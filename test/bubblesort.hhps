@@ -1,0 +1,22 @@
+int main(){
+    array (int, 10) a;
+    for i range(0, 10){
+        a[i] = 10-i;
+    } 
+    for i range(0, 10){
+        int t = 9-i;
+        for j range(0, t){
+            if (a[j] > a[j+1]){
+                int temp = a[j];
+                a[j] = a[j+1];
+                a[j+1] = temp;
+            }
+        }
+    }
+
+    for i range(0, 10){
+        println(a[i]);
+    }
+
+    return 0;
+}

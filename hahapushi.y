@@ -8,12 +8,13 @@
 
 void yyerror (char *s);
 int yylex();
+extern int line;
 
 StmtsNode *root;
 StmtsNode *funcs;
 
 void yyerror(char *s){
-    printf("%s\n", s);
+    printf("Error in line %d: %s\n", line, s);
 }
 %}
 
@@ -31,11 +32,11 @@ StmtsNode *stmtsptr;
 %token <val> NUM
 %token <tptr> MAIN VAR FUN
 %token <relop_cond> LT GT LE GE NE EQ AND OR
-%token IF ELSE FOR WHILE ARRAY INT LPAREN RPAREN LCBRACE RCBRACE SEMICOLON RETURN PRINT COMMA RANGE DECL //Break implement karna baki hai 
+%token IF ELSE FOR WHILE ARRAY INT LPAREN RPAREN LCBRACE RCBRACE SEMICOLON RETURN PRINT COMMA RANGE DECL INPUT PRINTLN//Break implement karna baki hai 
 %type <c> exp relop_exp
 %type <nData> id
 %type <stmtsptr> stmts else_stmt func_block fun_decs param_trail
-%type <stmtptr> stmt ifelse_stmt for_loop while_loop var_dec var_assgn exp_stmt print_stmt ret func_call fun_dec
+%type <stmtptr> stmt ifelse_stmt for_loop while_loop var_dec var_assgn print_stmt ret func_call fun_dec input_stmt
 %type <relop_cond> relops
 
 %right '='
@@ -75,16 +76,6 @@ fun_decs:
         $$->right = NULL;
     }
     ;
-
-/* args_trail:
-    INT VAR COMMA args_trail {
-        ;
-    }
-    |
-    INT VAR {
-        ;
-    }
-    ; */
 
 fun_dec:
     INT FUN LPAREN RPAREN LCBRACE stmts RCBRACE {
@@ -140,10 +131,6 @@ stmt:
         $$ = $1;
     }
     |
-    exp_stmt {
-        $$ = $1;
-    }
-    |
     print_stmt {
         $$ = $1;
     }
@@ -152,7 +139,11 @@ stmt:
         $$ = $1;
     }
     |
-    func_call {
+    func_call SEMICOLON {
+        $$ = $1;
+    }
+    |
+    input_stmt{
         $$ = $1;
     }
     ;
@@ -313,39 +304,6 @@ while_loop:
     }
     ;
 
-// var_dec:
-//     INT VAR '=' exp {
-//         $$ = (StmtNode*)malloc(sizeof(StmtNode));
-//         $$->nodeType = VAR_DEC;
-//         sprintf($$->bodyCode, "%s\nsw $t0,%s($t8)\n", $4, $2->addr);
-//         $$->down = NULL;
-//     }
-//     |
-//     INT VAR {
-//         $$ = (StmtNode*)malloc(sizeof(StmtNode));
-//         $$->nodeType = VAR_DEC;
-//         sprintf($$->bodyCode, "li $t0, 0\nsw $t0,%s($t8)\n", $2->addr);
-//         $$->down = NULL;
-//     }
-//     ;
-
-// var_assgn:
-//     VAR '=' exp {
-//         $$ = (StmtNode*)malloc(sizeof(StmtNode));
-//         $$->nodeType = VAR_ASSGN;
-//         sprintf($$->bodyCode, "%s\nsw $t0,%s($t8)\n", $3, $1->addr);
-//     }
-//     ;
-
-exp_stmt:
-    exp SEMICOLON {
-        $$ = (StmtNode*)malloc(sizeof(StmtNode));
-        $$->nodeType = EXP_STMT;
-        sprintf($$->bodyCode, "%s\n", $1);
-        $$->down = NULL;
-    }
-    ;
-
 relop_exp:
     // registers used: $t0, $t1, $t2
     // value set in register: $t0
@@ -389,31 +347,66 @@ var_assgn:
     VAR '=' exp {
         $$ = (StmtNode*)malloc(sizeof(StmtNode));
         $$->nodeType = VAR_ASSGN;
+        $$->down = NULL;
         sprintf($$->bodyCode, "%s\nsw $t0,%s($t8)\n", $3, $1->addr);
     }
     |
-    VAR '[' id ']' '=' exp {
+    VAR '[' exp ']' '=' exp {
         $$ = (StmtNode*)malloc(sizeof(StmtNode));
         $$->nodeType = VAR_ASSGN;
+        $$->down = NULL;
         sprintf($$->bodyCode, "%s\nsubu $sp $sp 4\nsw $t0 ($sp)\n%s\nlw $t1 ($sp)\nmul $t0 $t0 4\nlw $t2 %s($t8)\nadd $t0 $t0 $t2\nsw $t1 ($t0)\naddu $sp $sp 4",
         $6, $3, $1->addr);
+    }
+    |
+    VAR '=' func_call {
+        $$ = (StmtNode*)malloc(sizeof(StmtNode));
+        $$->nodeType = VAR_ASSGN;
+        $$->down = (StmtsNode*)malloc(sizeof(StmtsNode));
+        $$->down->singl = 1;
+        $$->down->left = $3;
+        $$->down->right = NULL;
+        sprintf($$->bodyCode, "%s\nsw $t0,%s($t8)\n", $3, $1->addr);
+    }
+    ;
+
+input_stmt:
+    INPUT LPAREN VAR RPAREN SEMICOLON {
+        $$ = (StmtNode*)malloc(sizeof(StmtNode));
+        $$->nodeType = INPUT_STMT;
+        sprintf($$->bodyCode, "li $v0, 4\nla $a0, promptMessage\nsyscall\nli $v0, 5\nsyscall\nsw $v0 %s($t8)", $3->addr);
+    }
+    |
+    INPUT LPAREN VAR '[' id ']' RPAREN SEMICOLON {
+        $$ = (StmtNode*)malloc(sizeof(StmtNode));
+        $$->nodeType = INPUT_STMT;
+        sprintf($$->bodyCode, "%s\nmul $t0 $t0 4\nlw $t2 %s($t8)\nadd $t0 $t0 $t2\nli $v0, 4\nla $a0, promptMessage\nsyscall\nli $v0, 5\nsyscall\nsw $v0 ($t0)",
+        $5, $3->addr);
     }
     ;
 
 print_stmt:
-    PRINT LPAREN id RPAREN SEMICOLON {
+    PRINT LPAREN exp RPAREN SEMICOLON {
         $$ = (StmtNode*)malloc(sizeof(StmtNode));
         $$->nodeType = PRINT_STMT;
         sprintf($$->bodyCode, "%s\nmove $a0 $t0\nli $v0 1\nsyscall",
         $3);
     }
+    |
+    PRINTLN LPAREN exp RPAREN SEMICOLON {
+        $$ = (StmtNode*)malloc(sizeof(StmtNode));
+        $$->nodeType = PRINT_STMT;
+        sprintf($$->bodyCode, "%s\nmove $a0 $t0\nli $v0 1\nsyscall\nli $v0, 4\nla $a0, nl\nsyscall",
+        $3);
+    }
     ;
 
 ret:
-    RETURN NUM SEMICOLON {
+    RETURN exp SEMICOLON {
         $$ = (StmtNode*)malloc(sizeof(StmtNode));
-        $$->nodeType = PRINT_STMT;
-        sprintf($$->bodyCode, "li $v0 10\nsyscall");
+        $$->nodeType = RETURN_STMT;
+        // sprintf($$->bodyCode, "li $v0 10\nsyscall");
+        sprintf($$->bodyCode, "%s", $2);
     }
     ;
 
@@ -422,7 +415,7 @@ id:
     |   
     NUM {sprintf($$, "li $t0, %d",$1);}
     |
-    VAR '[' id ']'{
+    VAR '[' exp ']'{
         sprintf($$, "%s\nlw $t1 %s($t8)\nmul $t0 $t0 4\nadd $t1 $t1 $t0\nlw $t0 ($t1)",
         $3, $1->addr);
     }
@@ -472,7 +465,7 @@ relops:
     ;
 
 func_call:
-    FUN LPAREN param_trail RPAREN SEMICOLON {
+    FUN LPAREN param_trail RPAREN {
         $$ = (StmtNode*)malloc(sizeof(StmtNode));
         $$->nodeType = FUNC_CALL;
         $$->down = $3;
@@ -523,8 +516,4 @@ exp:
     |   id           {sprintf($$,"%s\n", $1);}
     ;
 
-// id:
-//     VAR {sprintf($$, "lw $t0, %s($t8)",$1->addr);}
-//     |   NUM {sprintf($$, "li $t0, %d",$1);}
-//     ;
 %%
