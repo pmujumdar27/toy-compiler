@@ -250,7 +250,7 @@ for_loop:
         $$->down = $10;
     }
     |
-    FOR VAR RANGE LPAREN id COMMA id RPAREN LCBRACE stmt RCBRACE {
+    FOR VAR RANGE LPAREN id COMMA id RPAREN stmt {
         $$ = (StmtNode*)malloc(sizeof(StmtNode));
         $$->nodeType =FOR_LOOP;
         
