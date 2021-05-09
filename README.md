@@ -34,7 +34,7 @@ This is a compiler - a toy of sorts - written using ```flex```, ```bison``` and 
 ## About the Language
 ## ℹ️
 
-```HHPS``` is a language based on the 2 most most widely used programming languages : ```C``` and ```Python``` . ```HHPS``` is an attempt to bring out the best of both these languages and combine them into a single, easy to use language.
+```HHPS``` is a language based on the 2 most widely used programming languages : ```C``` and ```Python``` . ```HHPS``` is an attempt to bring out the best of both these languages and combine them into a single, easy to use language.
 
 It is a language with simple and intuitive syntax and grammar. It can be used by coders of any level, be it beginner, intermediate or experienced.
 
@@ -132,8 +132,7 @@ Multi-line comments : Anything between /* and */
 ## Grammar
 ## 📖
 
-For an overview of the Grammar, refer [grammar.txt](./grammar.txt)
-For the complete Parser, refer [hahapushi.y](./hahapushi.y)
+For the complete Parser, refer [hhps.y](./hhps.y)
 
 A statement can be :
 - Variable Declaration ```int b = 5```
@@ -153,9 +152,7 @@ A statement can be :
 toy-compiler
 ├──Makefile
 ├──README.md
-├──grammar.txt
-├──hahapushi.y
-├──harsh_temp.txt
+├──hhps.y
 ├──hhps.h
 ├──main.c
 ├──tok.l
