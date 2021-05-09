@@ -28,7 +28,8 @@ typedef enum {
 	PRINT_STMT,
 	RETURN_STMT,
 	FUNC_CALL,
-	FUNC_DEC
+	FUNC_DEC,
+	INPUT_STMT
 } StmtType;
 
 typedef struct _StmtsNode{

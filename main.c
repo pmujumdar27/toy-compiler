@@ -143,7 +143,7 @@ void StmtTrav(StmtNode *root){
 
 int main(){
     fp=fopen("asmb.asm","w");
-    fprintf(fp,".data\n\n.text\nli $t8,268500992\n");
+    fprintf(fp,".data\npromptMessage: .asciiz \"Enter number: \"\nnl: .asciiz \"\\n\"\n.text\nli $t8,268500992\n");
     yyparse();
     StmtsTrav(root);
     fprintf(fp, "li $v0, 10\nsyscall\n");

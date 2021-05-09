@@ -31,11 +31,11 @@ StmtsNode *stmtsptr;
 %token <val> NUM
 %token <tptr> MAIN VAR FUN
 %token <relop_cond> LT GT LE GE NE EQ AND OR
-%token IF ELSE FOR WHILE ARRAY INT LPAREN RPAREN LCBRACE RCBRACE SEMICOLON RETURN PRINT COMMA RANGE DECL //Break implement karna baki hai 
+%token IF ELSE FOR WHILE ARRAY INT LPAREN RPAREN LCBRACE RCBRACE SEMICOLON RETURN PRINT COMMA RANGE DECL INPUT PRINTLN//Break implement karna baki hai 
 %type <c> exp relop_exp
 %type <nData> id
 %type <stmtsptr> stmts else_stmt func_block fun_decs param_trail
-%type <stmtptr> stmt ifelse_stmt for_loop while_loop var_dec var_assgn exp_stmt print_stmt ret func_call fun_dec
+%type <stmtptr> stmt ifelse_stmt for_loop while_loop var_dec var_assgn exp_stmt print_stmt ret func_call fun_dec input_stmt
 %type <relop_cond> relops
 
 %right '='
@@ -153,6 +153,10 @@ stmt:
     }
     |
     func_call {
+        $$ = $1;
+    }
+    |
+    input_stmt{
         $$ = $1;
     }
     ;
@@ -400,11 +404,33 @@ var_assgn:
     }
     ;
 
+input_stmt:
+    INPUT LPAREN VAR RPAREN SEMICOLON {
+        $$ = (StmtNode*)malloc(sizeof(StmtNode));
+        $$->nodeType = INPUT_STMT;
+        sprintf($$->bodyCode, "li $v0, 4\nla $a0, promptMessage\nsyscall\nli $v0, 5\nsyscall\nsw $v0 %s($t8)", $3->addr);
+    }
+    |
+    INPUT LPAREN VAR '[' id ']' RPAREN SEMICOLON {
+        $$ = (StmtNode*)malloc(sizeof(StmtNode));
+        $$->nodeType = INPUT_STMT;
+        sprintf($$->bodyCode, "%s\nmul $t0 $t0 4\nlw $t2 %s($t8)\nadd $t0 $t0 $t2\nli $v0, 4\nla $a0, promptMessage\nsyscall\nli $v0, 5\nsyscall\nsw $v0 ($t0)",
+        $5, $3->addr);
+    }
+    ;
+
 print_stmt:
     PRINT LPAREN id RPAREN SEMICOLON {
         $$ = (StmtNode*)malloc(sizeof(StmtNode));
         $$->nodeType = PRINT_STMT;
         sprintf($$->bodyCode, "%s\nmove $a0 $t0\nli $v0 1\nsyscall",
+        $3);
+    }
+    |
+    PRINTLN LPAREN id RPAREN SEMICOLON {
+        $$ = (StmtNode*)malloc(sizeof(StmtNode));
+        $$->nodeType = PRINT_STMT;
+        sprintf($$->bodyCode, "%s\nmove $a0 $t0\nli $v0 1\nsyscall\nli $v0, 4\nla $a0, nl\nsyscall",
         $3);
     }
     ;

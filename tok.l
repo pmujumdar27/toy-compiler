@@ -7,7 +7,7 @@
 #include "hahapushi.tab.h"
 int line = 0;
 int indent = 0;
-int Adr=0;
+int Adr=100;
 symrec *sym_table = (symrec *)0;
 %}
 
@@ -31,6 +31,7 @@ COMMENT  "/*"([^*]|[\n]|"*"+([^*/]|[\n]))*"*"+"/"
 "array"		{ return ARRAY; }
 "int"			{ printf("int\n"); return INT; }
 "decl"		{ printf("decl\n"); return DECL; }
+"input"   { printf("input\n"); return INPUT; }
 "main"		{ symrec *s;
 				s = getsym(yytext);
 				if(s==0)
@@ -38,6 +39,7 @@ COMMENT  "/*"([^*]|[\n]|"*"+([^*/]|[\n]))*"*"+"/"
 				yylval.tptr = s;
         printf("main");
 				return MAIN;}
+
 
 "("				{ printf("("); return LPAREN; }
 ")"				{ printf(")"); return RPAREN; }
@@ -58,6 +60,7 @@ COMMENT  "/*"([^*]|[\n]|"*"+([^*/]|[\n]))*"*"+"/"
 
 "return"		{ return RETURN; }
 "print"			{ return PRINT; }
+"println"   { return PRINTLN; }
 
 {fname}			{ printf("\nFunction name: %s\n", yytext);
 				symrec *s;
