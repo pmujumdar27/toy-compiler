@@ -254,7 +254,7 @@ for_loop:
         $$->down = $10;
     }
     |
-    FOR VAR RANGE LPAREN id COMMA id RPAREN LCBRACE stmt RCBRACE {
+    FOR VAR RANGE LPAREN id COMMA id RPAREN stmt {
         $$ = (StmtNode*)malloc(sizeof(StmtNode));
         $$->nodeType =FOR_LOOP;
         
@@ -289,7 +289,7 @@ for_loop:
         sprintf($$->forUpdate, "%s", update_code);
         $$->down = (StmtsNode*)malloc(sizeof(StmtsNode));
         $$->down->singl = 1;
-        $$->down->left = $10;
+        $$->down->left = $9;
         $$->down->right = NULL;
     }
     ;
