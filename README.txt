@@ -29,3 +29,5 @@ make clean
 make clean_win
 
 ----------------------------------------------------------------------------------
+
+For further details about the project check out README.md
