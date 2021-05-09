@@ -123,9 +123,8 @@ Multi-line comments : Anything between /* and */
 - ```>=``` Greater than or Equal to
 - ```!=``` Not equal to
 - ```==``` Equal to
-- ```AND``` Logical AND
-- ```OR``` Logical OR
-- ```XOR``` Logical XOR
+- ```&&``` Logical AND
+- ```||``` Logical OR
 
 ---
 
