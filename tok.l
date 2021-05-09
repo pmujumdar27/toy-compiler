@@ -14,6 +14,8 @@ symrec *sym_table = (symrec *)0;
 dig             [0-9]
 integer         {dig}+
 id              [a-zA-Z_][a-zA-Z_]*
+
+fname			"fun_"[a-zA-Z_]*
 COMMENT  "/*"([^*]|[\n]|"*"+([^*/]|[\n]))*"*"+"/"
 
 %%
@@ -27,7 +29,8 @@ COMMENT  "/*"([^*]|[\n]|"*"+([^*/]|[\n]))*"*"+"/"
 "while"		{ return WHILE; }
 "range"		{ return RANGE; }
 "array"		{ return ARRAY; }
-"int"			{ printf("int"); return INT; }
+"int"			{ printf("int\n"); return INT; }
+"decl"		{ printf("decl\n"); return DECL; }
 "main"		{ symrec *s;
 				s = getsym(yytext);
 				if(s==0)
@@ -55,6 +58,16 @@ COMMENT  "/*"([^*]|[\n]|"*"+([^*/]|[\n]))*"*"+"/"
 
 "return"		{ return RETURN; }
 "print"			{ return PRINT; }
+
+{fname}			{ printf("\nFunction name: %s\n", yytext);
+				symrec *s;
+				s = getsym(yytext);
+				if(s==0)
+					s = putsym(yytext, VAR);
+				yylval.tptr = s;
+        printf("%s", yytext);
+				return FUN;
+				}
 
 {integer}		{ printf("%s", yytext); sscanf(yytext, "%d", &yylval.val); return NUM;}
 {id}			{ symrec *s;

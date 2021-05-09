@@ -1,3 +1,5 @@
+%error-verbose
+
 %{
 #include <stdio.h>
 #include <stdlib.h>
@@ -8,11 +10,13 @@ void yyerror (char *s);
 int yylex();
 
 StmtsNode *root;
+StmtsNode *funcs;
 
 void yyerror(char *s){
     printf("%s\n", s);
 }
 %}
+
 
 %union {
 int   val;  /* For returning numbers.                   */
@@ -25,13 +29,13 @@ StmtsNode *stmtsptr;
 }
 
 %token <val> NUM
-%token <tptr> MAIN VAR
+%token <tptr> MAIN VAR FUN
 %token <relop_cond> LT GT LE GE NE EQ AND OR
-%token IF ELSE FOR WHILE ARRAY INT LPAREN RPAREN LCBRACE RCBRACE SEMICOLON RETURN PRINT COMMA RANGE //Break implement karna baki hai
+%token IF ELSE FOR WHILE ARRAY INT LPAREN RPAREN LCBRACE RCBRACE SEMICOLON RETURN PRINT COMMA RANGE DECL //Break implement karna baki hai 
 %type <c> exp relop_exp
 %type <nData> id
-%type <stmtsptr> stmts else_stmt
-%type <stmtptr> stmt ifelse_stmt for_loop while_loop var_dec var_assgn exp_stmt print_stmt ret 
+%type <stmtsptr> stmts else_stmt func_block fun_decs param_trail
+%type <stmtptr> stmt ifelse_stmt for_loop while_loop var_dec var_assgn exp_stmt print_stmt ret func_call fun_dec
 %type <relop_cond> relops
 
 %right '='
@@ -40,14 +44,61 @@ StmtsNode *stmtsptr;
 %left '-' '+'
 %left '*' '/' '%'
 %right UMINUS
+
+%start prog
 %%
 
 prog:
+    func_block main
+    |
     main
 ;
 
+func_block:
+    DECL fun_decs {
+        funcs = $2;
+    }
+    ;
+
+fun_decs:
+    fun_dec DECL fun_decs {
+        $$ = (StmtsNode*)malloc(sizeof(StmtsNode));
+        $$->singl = 0;
+        $$->left = $1;
+        $$->right = $3;
+    }
+    |
+    fun_dec {
+        $$ = (StmtsNode*)malloc(sizeof(StmtsNode));
+        $$->singl = 1;
+        $$->left = $1;
+        $$->right = NULL;
+    }
+    ;
+
+/* args_trail:
+    INT VAR COMMA args_trail {
+        ;
+    }
+    |
+    INT VAR {
+        ;
+    }
+    ; */
+
+fun_dec:
+    INT FUN LPAREN RPAREN LCBRACE stmts RCBRACE {
+        printf("\nEntered function declearation of: %s\n", $2->name);
+        $$ = (StmtNode*)malloc(sizeof(StmtNode));
+        sprintf($$->initCode, "%s:", $2->name);
+        $$->nodeType = FUNC_DEC;
+        $$->down = $6;
+    }
+    ;
+
 main:
    INT MAIN LPAREN RPAREN LCBRACE stmts RCBRACE {
+        printf("Main function done\n");
         root = $6;
     }
     ;
@@ -98,6 +149,10 @@ stmt:
     }
     |
     ret {
+        $$ = $1;
+    }
+    |
+    func_call {
         $$ = $1;
     }
     ;
@@ -413,6 +468,45 @@ relops:
     OR {
         // $$ = $1;
         sprintf($$, "%s", $1);
+    }
+    ;
+
+func_call:
+    FUN LPAREN param_trail RPAREN SEMICOLON {
+        $$ = (StmtNode*)malloc(sizeof(StmtNode));
+        $$->nodeType = FUNC_CALL;
+        $$->down = $3;
+        sprintf($$->bodyCode, "jal %s", $1->name);
+    }
+    ;
+
+param_trail:
+    var_dec COMMA param_trail {
+        $$ = (StmtsNode*)malloc(sizeof(StmtsNode));
+        $$->singl = 0;
+        $$->left = $1;
+        $$->right = $3;
+    }
+    |
+    var_dec {
+        $$ = (StmtsNode*)malloc(sizeof(StmtsNode));
+        $$->singl = 1;
+        $$->left = $1;
+        $$->right = NULL;
+    }
+    |
+    var_assgn COMMA param_trail {
+        $$ = (StmtsNode*)malloc(sizeof(StmtsNode));
+        $$->singl = 0;
+        $$->left = $1;
+        $$->right = $3;
+    }
+    |
+    var_assgn {
+        $$ = (StmtsNode*)malloc(sizeof(StmtsNode));
+        $$->singl = 1;
+        $$->left = $1;
+        $$->right = NULL;
     }
     ;
 
