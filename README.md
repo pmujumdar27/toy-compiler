@@ -6,10 +6,10 @@
 **Course project for _CS327-Compilers_ course at IITGN.**
 
 Contributors :\
-[Harsh Patel](https://github.com/Harshp1802)\
-[Harshit Kumar](https://github.com/harshitkumar825)\
-[Pushkar Mujumdar](https://github.com/pmujumdar27)\
-[Shivam Sahni](https://github.com/shivam15s)
+[Harsh Patel](https://github.com/Harshp1802) - 18110062\
+[Harshit Kumar](https://github.com/harshitkumar825) - 18110063\
+[Pushkar Mujumdar](https://github.com/pmujumdar27) - 18110132\
+[Shivam Sahni](https://github.com/shivam15s) - 18110159
 
 
 This is a compiler - a toy of sorts - written using ```flex```, ```bison``` and ```C``` for our custom defined language ```HHPS```.
@@ -19,6 +19,7 @@ This is a compiler - a toy of sorts - written using ```flex```, ```bison``` and 
 ## Contents
 ## 📄
 - [About the Language](#about-the-language)
+- [Usage instructions](#usage-instructions)
 - [Feature Checklist](#feature-checklist)
 - [Basic Structure](#basic-structure)
 - [Lexicon and Syntax](#lexicon-and-syntax)
@@ -26,8 +27,10 @@ This is a compiler - a toy of sorts - written using ```flex```, ```bison``` and 
    - [Special Characters](#special-characters)
    - [Arithmetic Operators](#arithmetic-operators)
    - [Logical Operators](#logical-operators)
+   - [Reserved names](#reserved-names)
 - [Grammar](#grammar)
 - [Directory Structure](#directory-structure)
+- [Sample Programs](#sample-programs)
 - [References](#references)
 
 ---
@@ -38,6 +41,31 @@ This is a compiler - a toy of sorts - written using ```flex```, ```bison``` and 
 ```HHPS``` is a language based on the 2 most widely used programming languages : ```C``` and ```Python``` . ```HHPS``` is an attempt to bring out the best of both these languages and combine them into a single, easy to use language.
 
 It is a language with simple and intuitive syntax and grammar. It can be used by coders of any level, be it beginner, intermediate or experienced.
+
+---
+
+## Usage instructions
+
+For building the project and getting the executable `a.exe` (`a.out` in case of Linux)
+```
+make
+```
+
+For compiling the code from `test/factorial.hhps` (could be any path)
+```
+a.exe < test/factorial.hhps
+```
+The output ```MIPS``` code will be generated in ```asmb.asm```
+
+For deleting the build:
+- Linux
+```
+make clean
+```
+- Windows
+```
+make clean_win
+```
 
 ---
 
@@ -64,8 +92,8 @@ It is a language with simple and intuitive syntax and grammar. It can be used by
 
 ---
 
-# Basic structure
-# 🛠️
+## Basic structure
+## 🛠️
 
 Any program written in ```HHPS``` has 2 major blocks :
 
@@ -89,9 +117,9 @@ For the Lexical Analyser, refer [tok.l](./tok.l)
 
 Identifiers : Combination of lower and upper case alphabets and _ (except the keywords).
 
-Multi-line comments : Anything between /* and */
+Multi-line comments : Anything between ```/*``` and ```*/```
 
-# Keywords
+## Keywords
 
 - ```if``` Conditional statement
 - ```else``` Alternate Condition
@@ -106,12 +134,18 @@ Multi-line comments : Anything between /* and */
 - ```print``` Print to console
 - ```println``` Print with newline
 
-# Special Characters
+## Reserved names
+
+- ```fun_``` Should be the prefix of the function names
+
+Any function should have the above stated prefix in the function name, and any lexeme with the prefix will be treated as a function name.
+
+## Special Characters
 
 - ```\n``` Newline Character (error reporting)
 - ```;``` End of Statement
 
-# Arithmetic Operators
+## Arithmetic Operators
 
 - ```+``` Addition
 - ```-``` Subtraction / Unary Minus
@@ -121,7 +155,7 @@ Multi-line comments : Anything between /* and */
 - ```&``` Bitwise AND
 - ```|``` Bitwise OR
 
-# Logical Operators
+## Logical Operators
 
 - ```<``` Less than
 - ```>``` Greater than
@@ -137,16 +171,20 @@ Multi-line comments : Anything between /* and */
 ## Grammar
 ## 📖
 
-For the complete Parser, refer [hhps.y](./hhps.y)
+For the complete Grammar rules, refer the Parser Generator [hhps.y](./hhps.y)
 
 A statement can be :
-- Variable Declaration ```int b = 5```
-- Variable Assignment ```a = b + 1```
-- Print Statement ```print(c)```
-- Return Statement ```return 0```
+- Variable Declaration ```int b = 5;```
+- Variable Assignment ```a = b + 1;```
+- Print Statement ```print(c);```
+- Return Statement ```return 0;```
 - Conditional Statement (If-Else) ```if(x < 10){```
 - For Loop ```for i range(0,10){```
 - While Loop ```while(i < j){```
+- Array Declaration ```array (int, 10) a;```
+- Function Declaration ``` decl int fun_square(){```
+- Function call with parameters `x` and `y` \
+ ```fun_test(x=5, y=4);```
 
 ---
 
@@ -154,20 +192,29 @@ A statement can be :
 ## 📁
 
 ```
-toy-compiler
-├──Makefile
-├──README.md
 ├──hhps.y
 ├──hhps.h
 ├──main.c
+├──Makefile
+├──README.md
+├──README.txt
 ├──tok.l
-└──test
+└───test
+    ├──array_print_expressions.hhps
     ├──array_with_while.hhps
+    ├──array_with_while_input.hhps
+    ├──bubblesort.hhps
+    ├──conditionals.hhps
+    ├──error.hhps
     ├──factorial.hhps
     ├──for_loop.hhps
     ├──func_test.hhps
     ├──if-else.hhps
+    ├──if-else_input.hhps
+    ├──nested_for.hhps
     ├──nested_while.hhps
+    ├──remainder.hhps
+    ├──return_test.hhps
     └──while_loop.hhps
 ```
 
@@ -176,7 +223,7 @@ toy-compiler
 ## Sample Programs:
 ## ⌨️
 
-Sample code for Bubblesort written in `HHPS`
+Sample code for **Bubblesort** written in `HHPS`
 ```
 int main(){
     array (int, 10) a;

@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "hhps.h"
-#include "hahapushi.tab.h"
+#include "hhps.tab.h"
 int line = 1;
 int indent = 0;
 int Adr=100;

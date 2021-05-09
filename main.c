@@ -4,7 +4,7 @@
 #include <ctype.h>
 
 #include "hhps.h"
-#include "hahapushi.tab.h"
+#include "hhps.tab.h"
 
 
 FILE *fp;

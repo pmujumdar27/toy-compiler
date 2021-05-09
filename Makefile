@@ -1,20 +1,20 @@
-hahapushi: hahapushi.tab.o lex.yy.o main.c
-	gcc -g hahapushi.tab.o lex.yy.o main.c
+hhps: hhps.tab.o lex.yy.o main.c
+	gcc -g hhps.tab.o lex.yy.o main.c
 
-hahapushi.tab.o: hahapushi.tab.h hahapushi.tab.c
-	gcc -g -c hahapushi.tab.c
+hhps.tab.o: hhps.tab.h hhps.tab.c
+	gcc -g -c hhps.tab.c
 
-lex.yy.o: hahapushi.tab.h lex.yy.c
+lex.yy.o: hhps.tab.h lex.yy.c
 	gcc -g -c lex.yy.c
 
 lex.yy.c: tok.l
 	flex tok.l
 
-hahapushi.tab.h: hahapushi.y
-	bison -d hahapushi.y
+hhps.tab.h: hhps.y
+	bison -d hhps.y
 
 clean:
-	rm hahapushi.tab.c hahapushi.tab.o lex.yy.o a.out hahapushi.tab.h lex.yy.c asmb.asm
+	rm hhps.tab.c hhps.tab.o lex.yy.o a.out hhps.tab.h lex.yy.c asmb.asm
 
 clean_win:
-	del hahapushi.tab.c hahapushi.tab.o lex.yy.o a.exe hahapushi.tab.h lex.yy.c asmb.asm
+	del hhps.tab.c hhps.tab.o lex.yy.o a.exe hhps.tab.h lex.yy.c asmb.asm
