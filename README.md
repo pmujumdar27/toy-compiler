@@ -6,10 +6,10 @@
 **Course project for _CS327-Compilers_ course at IITGN.**
 
 Contributors :\
-[Harsh Patel](https://github.com/Harshp1802)\
-[Harshit Kumar](https://github.com/harshitkumar825)\
-[Pushkar Mujumdar](https://github.com/pmujumdar27)\
-[Shivam Sahni](https://github.com/shivam15s)
+[Harsh Patel](https://github.com/Harshp1802) - 18110062\
+[Harshit Kumar](https://github.com/harshitkumar825) - 18110063\
+[Pushkar Mujumdar](https://github.com/pmujumdar27) - 18110132\
+[Shivam Sahni](https://github.com/shivam15s) - 18110159
 
 
 This is a compiler - a toy of sorts - written using ```flex```, ```bison``` and ```C``` for our custom defined language ```HHPS```.
@@ -19,6 +19,7 @@ This is a compiler - a toy of sorts - written using ```flex```, ```bison``` and 
 ## Contents
 ## 📄
 - [About the Language](#about-the-language)
+- [Usage instructions](#usage-instructions)
 - [Feature Checklist](#feature-checklist)
 - [Basic Structure](#basic-structure)
 - [Lexicon and Syntax](#lexicon-and-syntax)
@@ -28,6 +29,7 @@ This is a compiler - a toy of sorts - written using ```flex```, ```bison``` and 
    - [Logical Operators](#logical-operators)
 - [Grammar](#grammar)
 - [Directory Structure](#directory-structure)
+- [Sample Programs](#sample-programs)
 - [References](#references)
 
 ---
@@ -38,6 +40,31 @@ This is a compiler - a toy of sorts - written using ```flex```, ```bison``` and 
 ```HHPS``` is a language based on the 2 most widely used programming languages : ```C``` and ```Python``` . ```HHPS``` is an attempt to bring out the best of both these languages and combine them into a single, easy to use language.
 
 It is a language with simple and intuitive syntax and grammar. It can be used by coders of any level, be it beginner, intermediate or experienced.
+
+---
+
+## Usage instructions
+
+For building the project and getting the executable `a.exe`
+```
+make
+```
+
+For compiling the code from `test/factorial.hhps` (could be any path)
+```
+a.exe < test/factorial.hhps
+```
+The output ```MIPS``` code will be generated in ```asmb.asm```
+
+For deleting the build:
+- Linux
+```
+make clean
+```
+- Windows
+```
+make clean_win
+```
 
 ---
 
@@ -176,7 +203,7 @@ toy-compiler
 ## Sample Programs:
 ## ⌨️
 
-Sample code for Bubblesort written in `HHPS`
+Sample code for **Bubblesort** written in `HHPS`
 ```
 int main(){
     array (int, 10) a;
