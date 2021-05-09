@@ -14,10 +14,13 @@ symrec *sym_table = (symrec *)0;
 dig             [0-9]
 integer         {dig}+
 id              [a-zA-Z_][a-zA-Z_]*
+
 fname			"fun_"[a-zA-Z_]*
+COMMENT  "/*"([^*]|[\n]|"*"+([^*/]|[\n]))*"*"+"/"
 
 %%
 
+{COMMENT} {continue;}
 "\n"			{ line++; indent=0; }
 [ \t]+		{ indent++; }
 "if"			{ return IF; }
