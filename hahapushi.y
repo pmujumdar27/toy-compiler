@@ -285,7 +285,7 @@ for_loop:
         sprintf($$->forUpdate, "%s", update_code);
         $$->down = (StmtsNode*)malloc(sizeof(StmtsNode));
         $$->down->singl = 1;
-        $$->down->left = $10;
+        $$->down->left = $9;
         $$->down->right = NULL;
     }
     ;
