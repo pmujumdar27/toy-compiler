@@ -9,7 +9,7 @@ Contributors :\
 [Harsh Patel](https://github.com/Harshp1802)\
 [Harshit Kumar](https://github.com/harshitkumar825)\
 [Pushkar Mujumdar](https://github.com/pmujumdar27)\
-[Shivam :trollface: Sahni](https://github.com/shivam15s)
+[Shivam Sahni](https://github.com/shivam15s)
 
 
 This is a compiler - a toy of sorts - written using ```flex```, ```bison``` and ```C``` for our custom defined language ```HHPS```.
