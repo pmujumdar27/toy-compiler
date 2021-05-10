@@ -83,6 +83,7 @@ make clean_win
 - ✔️ Nested For loop
 - ✔️ Arrays
 - ✔️ Function calls
+- ✔️ Recursion
 - ✔️ Return statements
 - ✔️ Verbose error reporting (with line number) ❗
 - ✔️ Multi-line comments
