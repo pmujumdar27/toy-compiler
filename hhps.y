@@ -82,6 +82,7 @@ fun_dec:
         printf("\nEntered function declearation of: %s\n", $2->name);
         $$ = (StmtNode*)malloc(sizeof(StmtNode));
         sprintf($$->initCode, "%s:", $2->name);
+        sprintf($$->bodyCode, "subu $sp $sp 4\nsw $ra 0($sp)");
         $$->nodeType = FUNC_DEC;
         $$->down = $6;
     }
@@ -406,6 +407,7 @@ ret:
         $$ = (StmtNode*)malloc(sizeof(StmtNode));
         $$->nodeType = RETURN_STMT;
         // sprintf($$->bodyCode, "li $v0 10\nsyscall");
+        sprintf($$->initCode, "lw $ra 0($sp)\naddi $sp $sp 4");
         sprintf($$->bodyCode, "%s", $2);
     }
     ;

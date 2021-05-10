@@ -11,7 +11,7 @@ lex.yy.c: tok.l
 	flex tok.l
 
 hhps.tab.h: hhps.y
-	bison -d --warning='none' hhps.y
+	bison -d --w='none' hhps.y
 
 clean:
 	rm hhps.tab.c hhps.tab.o lex.yy.o a.out hhps.tab.h lex.yy.c asmb.asm

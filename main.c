@@ -125,6 +125,7 @@ void StmtTrav(StmtNode *root){
 
         case FUNC_DEC:
             fprintf(fp, "%s\n", root->initCode);
+            fprintf(fp, "%s\n", root->bodyCode);
             StmtsTrav(root->down);
             fprintf(fp, "\njr $ra\n");
             break;
@@ -137,6 +138,7 @@ void StmtTrav(StmtNode *root){
 
         case RETURN_STMT:
             ;
+            fprintf(fp, "%s\n", root->initCode);
             fprintf(fp, "%s\n", root->bodyCode);
             if(ismain){
                 ;

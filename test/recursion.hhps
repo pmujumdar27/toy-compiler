@@ -1,0 +1,16 @@
+decl int fun_fac(){
+    if (k==0){
+        return 1;
+    } 
+    t = fun_fac(k = k-1);
+    k = k+1;
+    return k*t;
+}
+
+int main(){
+    int k = 4;
+    int ret;
+    ret = fun_fac(k=4);
+    println(ret);
+    return 0;
+}
